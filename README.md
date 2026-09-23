@@ -56,6 +56,7 @@ See [`notes/analysis.md`](notes/analysis.md) for the derivation and the exact
 remaining proof obligations.
 See [`notes/lean_patch_plan.md`](notes/lean_patch_plan.md) for the file-by-file Lean patch plan.
 See [`notes/prior_work.md`](notes/prior_work.md) for the dated prior-work audit.
+See [`notes/proof_status.md`](notes/proof_status.md) for a strict separation between established combinatorics, source-level overcharges, and the remaining Lean obligations.
 The first uncompiled source-aligned proof sketch is in [`drafts/loop_cost_refinement.md`](drafts/loop_cost_refinement.md).
 
 ## Why the `+1` looks removable
@@ -163,6 +164,38 @@ candidate charge:        bichromatic_edges
 
 The candidate charge was never violated in the run.
 
+### Direct loop-telescope stress test
+
+Command:
+
+```bash
+python experiments/loop_telescope.py \
+  --trials 200000 \
+  --seed 20260923
+```
+
+Committed summary: [`results/loop_telescope_summary.json`](results/loop_telescope_summary.json).
+
+Result:
+
+```text
+trials:      200,000
+violations:  0
+```
+
+This test exercises the aggregate bookkeeping needed by the proposed Lean
+patch, checking on every sampled full-call loop:
+
+```text
+marked_i + emptied_i <= meetings_i
+final_nonempty + total_emptied = p
+final_nonempty = own_groups
+total_marked + p <= total_meetings + own_groups
+```
+
+Unlike the single-group stress test, this directly tests the telescope that
+would replace the current coarse child-meeting charge.
+
 These experiments are **falsification tests, not a proof**.
 
 ## Reproduce
@@ -175,6 +208,7 @@ cd pivot
 
 python experiments/reselection_exhaustive.py
 python experiments/random_reselection.py --trials 50000 --seed 20260923
+python experiments/loop_telescope.py --trials 200000 --seed 20260923
 python experiments/exponent_sweep.py
 ```
 
