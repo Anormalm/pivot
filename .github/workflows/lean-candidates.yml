@@ -123,6 +123,11 @@ jobs:
             cat drafts/CallCostFullCreditCandidate.lean
           } > upstream/formal/lean/CandidateCallCostFullCredit.lean
 
+          {
+            echo 'import Frontier.CHD.CostLe'
+            cat drafts/FullCreditCancellationCandidate.lean
+          } > upstream/formal/lean/CandidateFullCreditCancellation.lean
+
       - name: Check all candidate modules
         working-directory: upstream/formal/lean
         shell: bash
@@ -161,6 +166,9 @@ jobs:
           echo "::group::CandidateCallCostFullCredit"
           lake env lean CandidateCallCostFullCredit.lean || status=1
           echo "::endgroup::"
+          echo "::group::CandidateFullCreditCancellation"
+          lake env lean CandidateFullCreditCancellation.lean || status=1
+          echo "::endgroup::"
           exit "$status"
 
-# candidate set revision: 12
+# candidate set revision: 13
