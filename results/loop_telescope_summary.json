@@ -1,0 +1,17 @@
+{
+  "seed": 20260923,
+  "requested_trials": 200000,
+  "completed_trials": 200000,
+  "violations": 0,
+  "mean_aggregate_slack": 23.318355,
+  "max_aggregate_slack": 102,
+  "tight_fraction": 0.014585,
+  "mean_marked_events": 11.79706,
+  "mean_child_group_meetings": 38.3359,
+  "checked_properties": [
+    "marked_i + emptied_i <= meetings_i for every child",
+    "final_nonempty + total_emptied == p",
+    "final_nonempty == own_groups",
+    "total_marked + p <= total_meetings + own_groups"
+  ]
+}
