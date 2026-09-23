@@ -1,0 +1,74 @@
+name: Lean candidate checks
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - "drafts/**"
+      - ".github/workflows/lean-candidates.yml"
+  push:
+    branches: [loop-telescope]
+    paths:
+      - "drafts/**"
+      - ".github/workflows/lean-candidates.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  candidate-lemmas:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout pivot
+        uses: actions/checkout@v4
+
+      - name: Checkout pinned C-HD snapshot
+        uses: actions/checkout@v4
+        with:
+          repository: spicylemonade/c-hd-proof
+          ref: 98c53accb47a505482a1781597ae14bf67e81cec
+          path: upstream
+
+      - name: Install pinned Lean toolchain
+        uses: leanprover/lean-action@v1
+        with:
+          lake-package-directory: upstream/formal/lean
+          auto-config: false
+          build: false
+          test: false
+          lint: false
+
+      - name: Fetch pinned Mathlib cache
+        working-directory: upstream/formal/lean
+        run: lake exe cache get
+
+      - name: Prepare candidate modules
+        shell: bash
+        run: |
+          {
+            echo 'import Frontier.CHD.LoopCost'
+            cat drafts/LoopCostFiniteCandidates.lean
+          } > upstream/formal/lean/CandidateLoopCostFinite.lean
+
+          {
+            echo 'import Frontier.CHD.LoopCost'
+            cat drafts/IterCostRefinedCandidate.lean
+          } > upstream/formal/lean/CandidateIterCost.lean
+
+          {
+            echo 'import Frontier.Homes'
+            cat drafts/HomeOwnColourCandidate.lean
+          } > upstream/formal/lean/CandidateHomeOwnColour.lean
+
+      - name: Check finite-set candidates
+        working-directory: upstream/formal/lean
+        run: lake env lean CandidateLoopCostFinite.lean
+
+      - name: Check refined iter-cost candidate
+        working-directory: upstream/formal/lean
+        run: lake env lean CandidateIterCost.lean
+
+      - name: Check own-home colour candidate
+        working-directory: upstream/formal/lean
+        run: lake env lean CandidateHomeOwnColour.lean
