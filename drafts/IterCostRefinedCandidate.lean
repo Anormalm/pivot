@@ -123,6 +123,12 @@ theorem iterCost_le_with_empty_credit_candidate
         = ap * Ui.card + ad * Ui.card + 4 * Ui.card := by
     ring
 
+  have hmarked_comm :
+      (markedGroups σ Ui).card * (g + 1 + I)
+        =
+      (g + 1 + I) * (markedGroups σ Ui).card := by
+    ring
+
   omega
 
 end CandidateIter
