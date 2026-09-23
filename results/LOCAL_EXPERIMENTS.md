@@ -135,3 +135,61 @@ They do **not** establish:
 - that `k = 4` is valid in every formal side condition without further work.
 
 Those are explicit proof obligations in `notes/analysis.md`.
+
+
+## Experiment 5: exhaustive own-home colour bridge
+
+Configuration:
+
+```text
+max tree vertices: 6
+home colours:      3
+```
+
+Result:
+
+```text
+group subsets checked: 5,699,730
+home identity checks:  5,699,730
+violations:            0
+elapsed locally:       4.249 s
+```
+
+For every nonempty group subset `P`, the experiment verifies
+
+```text
+#child homes(P) + [own home represented]
+    = #distinct homes(P)
+```
+
+and
+
+```text
+#distinct homes(P) - 1
+    <= #bichromatic parent edges(containing piece).
+```
+
+This is a direct finite check of the per-group inequality needed to strengthen
+`mkOf_full_le` to include `ownGroupsOf`.
+
+## Experiment 6: refined one-step cost arithmetic
+
+The elementary inequality
+
+```text
+g(M+E) + (g+1+I)M + I E
+    <= (2g+1+I)R
+```
+
+under `M+E <= R` was exhaustively checked over 85,293 small assignments:
+
+```text
+g       in [0,8]
+I       in [0,12]
+marked  in [0,8]
+emptied in [0,8]
+meeting in [0,16]
+violations: 0
+```
+
+See `results/iter_cost_arithmetic_summary.json`.
