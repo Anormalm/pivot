@@ -93,6 +93,12 @@ jobs:
             cat drafts/RecCostCreditCandidate.lean
           } > upstream/formal/lean/CandidateRecCostCredit.lean
 
+          {
+            echo 'import Frontier.CHD.CostLog'
+            cat drafts/RecCostCreditCandidate.lean
+            cat drafts/LoopRecCostCreditCandidate.lean
+          } > upstream/formal/lean/CandidateLoopRecCostCredit.lean
+
       - name: Check all candidate modules
         working-directory: upstream/formal/lean
         shell: bash
@@ -119,6 +125,9 @@ jobs:
           echo "::group::CandidateRecCostCredit"
           lake env lean CandidateRecCostCredit.lean || status=1
           echo "::endgroup::"
+          echo "::group::CandidateLoopRecCostCredit"
+          lake env lean CandidateLoopRecCostCredit.lean || status=1
+          echo "::endgroup::"
           exit "$status"
 
-# candidate set revision: 8
+# candidate set revision: 9
