@@ -52,6 +52,7 @@ theorem card_children_meeting_add_one_le_of_none_candidate
       simp only [C, Finset.mem_filter, Finset.mem_univ, true_and] at hYC
       obtain ⟨hpar, v, hv⟩ := hYC
       obtain ⟨hvP, hvU⟩ := Finset.mem_inter.mp hv
+      change (some Y : Option ι) ∈ H.erase none
       rw [Finset.mem_erase]
       refine ⟨by simp, ?_⟩
       exact Finset.mem_image.mpr
