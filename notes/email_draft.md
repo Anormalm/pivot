@@ -64,7 +64,7 @@ O(sqrt(m N log N)).
 At the `m = n log^(3/4)n` profile from the post this would be
 `n log^(7/8)n` rather than `n log^(11/12)n`.
 
-I have not proved that final theorem in Lean. However, the local accounting chain is now compiling in CI against the exact C-HD snapshot (`98c53acc...`) with Lean 4.34.0: the emptying/meeting lemmas, refined one-step cost, I-weighted loop telescope, fresh one-block insertion bound, refined home-colour lemma, and credit-carrying CostLog transport all pass. The remaining work is the root-record/call-cost assembly, the abstract fresh-insertion interface, `CostLe` cancellation, and parameter retuning.
+I have not proved that final theorem in Lean. However, the local accounting chain is now compiling in CI against the exact C-HD snapshot (`98c53acc...`) with Lean 4.34.0: the emptying/meeting lemmas, refined one-step cost, I-weighted loop telescope, fresh one-block insertion bound, refined home-colour lemma, and credit-carrying CostLog transport all pass. The full recursive `CallC` cost assembly now also passes Lean CI under one explicit hypothesis that BM.6 initialization is linear in the number of pivots. So the remaining local interface change is precisely that fresh-insertion repricing; after that, the main proof work is the `CostLe` cancellation and parameter retuning.
 
 I put the source audit, direct N4 patch, candidate Lean lemmas, and
 reproducible falsification tests here:
