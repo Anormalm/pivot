@@ -1,0 +1,61 @@
+name: Lean candidate check
+
+on:
+  push:
+    branches:
+      - loop-telescope
+  workflow_dispatch:
+
+jobs:
+  candidate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Checkout pivot
+        uses: actions/checkout@v4
+
+      - name: Checkout audited C-HD snapshot
+        uses: actions/checkout@v4
+        with:
+          repository: spicylemonade/c-hd-proof
+          ref: 98c53accb47a505482a1781597ae14bf67e81cec
+          path: upstream
+
+      - name: Install exact Lean toolchain
+        shell: bash
+        run: |
+          set -euxo pipefail
+          curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh \
+            | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+          "$HOME/.elan/bin/elan" toolchain install leanprover/lean4:v4.34.0
+
+      - name: Assemble candidate module
+        shell: bash
+        run: |
+          set -euxo pipefail
+          target=upstream/formal/lean/Frontier/CHD/PivotCandidate.lean
+          {
+            echo 'import Frontier.CHD.LoopCost'
+            echo
+            cat drafts/LoopCostFiniteCandidates.lean
+            echo
+            cat drafts/IterCostRefinedCandidate.lean
+            echo
+            cat drafts/LoopCostInsertCreditCandidate.lean
+          } > "$target"
+
+      - name: Fetch pinned dependencies
+        working-directory: upstream/formal/lean
+        shell: bash
+        run: |
+          set -euxo pipefail
+          lake update
+          lake exe cache get
+
+      - name: Compile no-sorry candidate layer
+        working-directory: upstream/formal/lean
+        shell: bash
+        run: |
+          set -euxo pipefail
+          lake env lean Frontier/CHD/PivotCandidate.lean
