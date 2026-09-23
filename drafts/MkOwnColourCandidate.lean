@@ -122,10 +122,9 @@ theorem mkOwn_full_le_of_W'_none_candidate
             refine ⟨v, hvG, ?_⟩
             simpa [homeX] using hWnone v hvW
           have htmp :=
-            (BM.Log.ranges hL).
-              card_children_meeting_add_one_le_of_none_candidate
-                (val := fun v => dis (s := s) v)
-                X g.toFinset hnone
+            (BM.Log.ranges hL).card_children_meeting_add_one_le_of_none_candidate
+              (val := fun v => dis (s := s) v)
+              X g.toFinset hnone
           rw [heq] at htmp
           exact htmp
         · simp only [if_neg hown, Nat.add_zero]
