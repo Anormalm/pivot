@@ -19,8 +19,8 @@ places where its current cost accounting appears deliberately coarse:
    though they are inserted into a fresh one-block data structure and
    `Insert` does not split.
 
-If both refinements are proved in the C-HD cost model, the parameter balance
-changes from
+If both refinements are proved **and the parameter/master-cost lemmas are
+retuned to the square-root scale**, the candidate parameter balance changes from
 
 ```text
 k = Theta(sqrt(t))
@@ -56,6 +56,9 @@ See [`notes/analysis.md`](notes/analysis.md) for the derivation and the exact
 remaining proof obligations.
 See [`notes/lean_patch_plan.md`](notes/lean_patch_plan.md) for the file-by-file Lean patch plan.
 See [`notes/prior_work.md`](notes/prior_work.md) for the dated prior-work audit.
+See [`notes/new_parameter_route.md`](notes/new_parameter_route.md) for the replacement parameter calculus.
+See [`notes/fresh_insert_audit.md`](notes/fresh_insert_audit.md) for the BM.6 source-level overcharge audit.
+See [`notes/exact_reselection_lemma.md`](notes/exact_reselection_lemma.md) for the exact group/home combinatorics.
 The first uncompiled source-aligned proof sketch is in [`drafts/loop_cost_refinement.md`](drafts/loop_cost_refinement.md).
 
 ## Why the `+1` looks removable
@@ -232,4 +235,4 @@ sum over children i of |markedGroups(sigma_i, U_i)|
 A proof should inject every actual BM.23 marking into a non-final represented
 home, then reuse C-HD's existing PT-piece and `Cr/Be` charging lemmas.
 
-Only after that should the master-cost algebra be retuned to `k = 4`.
+Only after that should the master-cost algebra and parameter program be retuned to `k = 4` and a new `t` satisfying `lgN <= t^2 * dd`.
