@@ -1,0 +1,42 @@
+name: Lean candidate check
+
+on:
+  push:
+    branches: [loop-telescope]
+    paths:
+      - 'ci/**'
+      - '.github/workflows/lean-candidate.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  finite-set-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout pivot
+        uses: actions/checkout@v4
+
+      - name: Checkout exact C-HD snapshot
+        uses: actions/checkout@v4
+        with:
+          repository: spicylemonade/c-hd-proof
+          ref: 98c53accb47a505482a1781597ae14bf67e81cec
+          path: upstream
+
+      - name: Install Lean 4.34 and Mathlib cache
+        uses: leanprover/lean-action@v1
+        with:
+          lake-package-directory: upstream/formal/lean
+          auto-config: false
+          build: false
+          test: false
+          lint: false
+          use-mathlib-cache: true
+
+      - name: Check finite-set candidate lemmas
+        run: |
+          cp ci/FiniteSetCheck.lean upstream/formal/lean/FiniteSetCheck.lean
+          cd upstream/formal/lean
+          lake env lean FiniteSetCheck.lean
