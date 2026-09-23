@@ -89,6 +89,11 @@ theorem iterCost_le_with_empty_credit_candidate
         + I * (emptiedGroups σ Ui).card
       ≤
       (2 * g + 1 + I) * R := by
+    have hE :
+        (g + I) * (emptiedGroups σ Ui).card
+          ≤
+        (2 * g + 1 + I) * (emptiedGroups σ Ui).card := by
+      exact Nat.mul_le_mul_right _ (by omega)
     have hcoeff :
         g * ((markedGroups σ Ui).card + (emptiedGroups σ Ui).card)
           + (g + 1 + I) * (markedGroups σ Ui).card
@@ -96,7 +101,20 @@ theorem iterCost_le_with_empty_credit_candidate
         ≤
         (2 * g + 1 + I) *
           ((markedGroups σ Ui).card + (emptiedGroups σ Ui).card) := by
-      omega
+      calc
+        g * ((markedGroups σ Ui).card + (emptiedGroups σ Ui).card)
+            + (g + 1 + I) * (markedGroups σ Ui).card
+            + I * (emptiedGroups σ Ui).card
+          =
+        (2 * g + 1 + I) * (markedGroups σ Ui).card
+            + (g + I) * (emptiedGroups σ Ui).card := by ring
+        _ ≤
+        (2 * g + 1 + I) * (markedGroups σ Ui).card
+            + (2 * g + 1 + I) * (emptiedGroups σ Ui).card :=
+          Nat.add_le_add_left hE _
+        _ =
+        (2 * g + 1 + I) *
+          ((markedGroups σ Ui).card + (emptiedGroups σ Ui).card) := by ring
     exact hcoeff.trans
       (Nat.mul_le_mul_left (2 * g + 1 + I) hmeet)
 
