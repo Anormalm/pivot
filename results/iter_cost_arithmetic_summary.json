@@ -1,0 +1,13 @@
+{
+  "checked_assignments": 85293,
+  "violations": 0,
+  "tight_assignments": 1053,
+  "range": {
+    "g": [0, 8],
+    "I": [0, 12],
+    "marked": [0, 8],
+    "emptied": [0, 8],
+    "meeting": [0, 16]
+  },
+  "inequality": "g(M+E)+(g+1+I)M+IE <= (2g+1+I)R under M+E<=R"
+}
