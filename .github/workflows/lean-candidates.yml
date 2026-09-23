@@ -113,6 +113,16 @@ jobs:
             cat drafts/FullTerminalCreditCandidate.lean
           } > upstream/formal/lean/CandidateFullTerminalCredit.lean
 
+          {
+            echo 'import Frontier.CHD.LoopCost'
+            cat drafts/LoopCostFiniteCandidates.lean
+            cat drafts/IterCostRefinedCandidate.lean
+            cat drafts/LoopCostInsertCreditCandidate.lean
+            cat drafts/FinalResidualCandidate.lean
+            cat drafts/FullTerminalCreditCandidate.lean
+            cat drafts/CallCostFullCreditCandidate.lean
+          } > upstream/formal/lean/CandidateCallCostFullCredit.lean
+
       - name: Check all candidate modules
         working-directory: upstream/formal/lean
         shell: bash
@@ -148,6 +158,9 @@ jobs:
           echo "::group::CandidateFullTerminalCredit"
           lake env lean CandidateFullTerminalCredit.lean || status=1
           echo "::endgroup::"
+          echo "::group::CandidateCallCostFullCredit"
+          lake env lean CandidateCallCostFullCredit.lean || status=1
+          echo "::endgroup::"
           exit "$status"
 
-# candidate set revision: 11
+# candidate set revision: 12
