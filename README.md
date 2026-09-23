@@ -55,6 +55,7 @@ n log^(11/12) n  ->  n log^(7/8) n.
 See [`notes/analysis.md`](notes/analysis.md) for the derivation and the exact
 remaining proof obligations.
 See [`notes/lean_patch_plan.md`](notes/lean_patch_plan.md) for the file-by-file Lean patch plan.
+See [`notes/new_parameter_route.md`](notes/new_parameter_route.md) for the square-root parameter retuning argument.
 See [`notes/prior_work.md`](notes/prior_work.md) for the dated prior-work audit.
 See [`notes/proof_status.md`](notes/proof_status.md) for a strict separation between established combinatorics, source-level overcharges, and the remaining Lean obligations.
 The first uncompiled source-aligned proof sketch is in [`drafts/loop_cost_refinement.md`](drafts/loop_cost_refinement.md).
