@@ -44,33 +44,36 @@ theorem card_nonempty_next_eq_candidate (Ui : Finset (Fin G.n)) :
     =
     (Finset.univ.filter (fun j => (σ.P j).Nonempty)).card := by
   classical
-  rw [← Finset.card_union_of_disjoint]
-  · apply Finset.card_congr
-    refine ⟨fun j hj => j, ?_, ?_, ?_⟩
-    · intro j hj
-      simp only [Finset.mem_union, Finset.mem_filter, Finset.mem_univ,
-        true_and, emptiedGroups] at hj ⊢
-      rcases hj with hres | hemp
-      · obtain ⟨x, hx⟩ := hres
-        exact ⟨x, (Finset.mem_sdiff.mp hx).1⟩
-      · exact hemp.1
-    · intro j hj
-      simp only [Finset.mem_filter, Finset.mem_univ, true_and,
-        Finset.mem_union, emptiedGroups] at hj ⊢
-      by_cases hres : (σ.P j \ Ui).Nonempty
-      · exact Or.inl hres
-      · right
-        refine ⟨hj, fun x hx => ?_⟩
-        by_contra hxU
-        exact hres ⟨x, Finset.mem_sdiff.mpr ⟨hx, hxU⟩⟩
-    · intro a _ b _ h
-      exact h
-  · rw [Finset.disjoint_left]
+  have hd : Disjoint
+      (Finset.univ.filter (fun j => (σ.P j \ Ui).Nonempty))
+      (emptiedGroups σ Ui) := by
+    rw [Finset.disjoint_left]
     intro j hres hemp
     simp only [Finset.mem_filter, Finset.mem_univ, true_and,
       emptiedGroups] at hres hemp
     obtain ⟨x, hx⟩ := hres
     exact (Finset.mem_sdiff.mp hx).2 (hemp.2 (Finset.mem_sdiff.mp hx).1)
+  have hu :
+      (Finset.univ.filter (fun j => (σ.P j \ Ui).Nonempty)) ∪
+          emptiedGroups σ Ui
+        =
+      Finset.univ.filter (fun j => (σ.P j).Nonempty) := by
+    ext j
+    simp only [Finset.mem_union, Finset.mem_filter, Finset.mem_univ,
+      true_and, emptiedGroups]
+    constructor
+    · rintro (hres | hemp)
+      · obtain ⟨x, hx⟩ := hres
+        exact ⟨x, (Finset.mem_sdiff.mp hx).1⟩
+      · exact hemp.1
+    · intro hne
+      by_cases hres : (σ.P j \ Ui).Nonempty
+      · exact Or.inl hres
+      · right
+        refine ⟨hne, fun x hx => ?_⟩
+        by_contra hxU
+        exact hres ⟨x, Finset.mem_sdiff.mpr ⟨hx, hxU⟩⟩
+  rw [← hu, Finset.card_union_of_disjoint hd]
 
 /-- Every group emptied by child U_i also meets U_i through the
 original group P0_j. -/
