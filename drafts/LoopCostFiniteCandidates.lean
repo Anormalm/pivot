@@ -33,13 +33,13 @@ variable {p : ℕ} (σ : LState G s p) (P0 : Fin p → Finset (Fin G.n))
 /-- Exact form of upstream `card_nonempty_next`.
 
 The two sets
-  {j | (P_j \\ U_i).Nonempty}
+  {j | (P_j \ U_i).Nonempty}
 and
   emptiedGroups σ U_i
 partition the currently nonempty groups.
 -/
 theorem card_nonempty_next_eq_candidate (Ui : Finset (Fin G.n)) :
-    (Finset.univ.filter (fun j => (σ.P j \\ Ui).Nonempty)).card
+    (Finset.univ.filter (fun j => (σ.P j \ Ui).Nonempty)).card
       + (emptiedGroups σ Ui).card
     =
     (Finset.univ.filter (fun j => (σ.P j).Nonempty)).card := by
@@ -57,7 +57,7 @@ theorem card_nonempty_next_eq_candidate (Ui : Finset (Fin G.n)) :
     · intro j hj
       simp only [Finset.mem_filter, Finset.mem_univ, true_and,
         Finset.mem_union, emptiedGroups] at hj ⊢
-      by_cases hres : (σ.P j \\ Ui).Nonempty
+      by_cases hres : (σ.P j \ Ui).Nonempty
       · exact Or.inl hres
       · right
         refine ⟨hj, fun x hx => ?_⟩
