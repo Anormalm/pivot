@@ -1,113 +1,131 @@
 # Outreach plan for C-HD authors
 
-Target date: 2026-09-23 evening (Singapore time)
+Target: 2026-09-23 evening, Singapore time.
 
-## Primary recipient
+## Recipient
 
-Geby Jaff, author of the Vals post "A Faster Shortest Path Algorithm"
-(20 Sep 2026).
+Primary route:
 
-Public post:
+```text
+contact@vals.ai
+Attn: Geby Jaff
+```
+
+Vals currently lists `contact@vals.ai` on its public About page:
+https://www.vals.ai/about
+
+Geby Jaff is the author/researcher associated with the C-HD Vals post:
 https://www.vals.ai/blogs/faster-shortest-path-algorithm
 
-A public direct email address was not found in the post. If no address is
-available from an existing contact route, LinkedIn is the clean fallback:
+Fallback: LinkedIn
 https://www.linkedin.com/in/geby-jaff
 
-## Goal of the first message
+Do not guess a personal Vals email pattern.
 
-Do not pitch "we proved a faster algorithm."
+## First-message objective
 
-The useful first-contact goal is to get an expert sanity check on one narrow
-accounting question:
+Ask for a sanity check on one narrow paper-level point:
 
-> Is there a hidden reason the full-call BM.23 analysis needs one exceptional
-> expensive re-selection per pivot group, or can the final residual/own
-> `none` home remove that exception?
+> In N4(i), can the terminal home/component sharpen
+> `g_j <= c_j+1` to `g_j <= c_j`?
 
-This makes the message easy to evaluate and lowers the cost of replying.
+This is easier to inspect than leading with the eventual `7/8` exponent.
 
-## Claims safe to make
+## Core argument to present
 
-1. The upstream executable semantics re-select a group only when the current
-   pivot is returned **and** the residual group is nonempty.
-2. For a full call, the upstream invariant has `S subset U`, so every
-   original pivot-group vertex is eventually accounted for.
-3. This gives the elementary candidate bound
-   `g_j <= #represented homes(P_j) - 1`.
-4. Existing C-HD tree-colour machinery already gives
-   `#homes(piece) - 1 <= #bichromatic parent edges(piece)`.
-5. The upstream cost proof currently uses a coarser child-meeting counter that
-   preserves a once-per-group term.
-6. BM.6 initial pivot insertion is separately charged with the generic evolved
-   insert cost even though the structure starts with one block and Insert does
-   not split.
-7. If both tightenings formalize cleanly, retuning with constant `k` gives
-   the **conditional** candidate core bound `O(sqrt(m n log n))`, hence
-   `n log^(7/8)n` at `m=n log^(3/4)n`.
+The existing N4 proof already says:
 
-## Claims NOT safe to make yet
+1. deleting `c_j` different-home edges leaves `c_j+1`
+   monochromatic components;
+2. pivots removed by distinct re-selection iterations have distinct homes.
 
-- "The C-HD theorem is wrong."
-- "We proved O(sqrt(m n log n))."
-- "The Lean proof already compiles."
-- "This is a new SOTA theorem."
-- "The 7/8 exponent is verified."
+The missing observation is that BM.23 only re-selects if the residual group
+is nonempty. Therefore those `g_j` re-selection homes cannot use every
+home-component:
 
-## Evidence to link
+- if a child eventually empties the group, that terminal home causes no
+  re-selection;
+- otherwise a final residual member lies in `W'_X`, home 0.
 
-Canonical working repo:
+Thus the group touches at least `g_j+1` components and
+
+```text
+g_j+1 <= c_j+1
+=> g_j <= c_j.
+```
+
+## Secondary observation
+
+BM.6 initial pivots are inserted into a fresh one-block DLazy structure.
+Insert does not split. Existing upstream lemmas imply constant insertion cost
+there, while `BMCost.initCost` uses the generic evolved `O(t)` insert
+charge.
+
+Both observations are needed for the exponent to move.
+
+## Conditional consequence
+
+Only after the mechanism:
+
+```text
+k = 4
+t ~ sqrt(N log N / m)
+T_core ~ N log N/t + m t
+       = O(sqrt(m N log N)).
+```
+
+At `m=n log^(3/4)n`:
+
+```text
+11/12 -> 7/8.
+```
+
+Do not frame this as proved.
+
+## Formal status to disclose
+
+Closed at paper/source level:
+- direct N4 terminal-component argument;
+- fresh one-block initial-insert audit;
+- exact emptying telescope arithmetic;
+- residual/own home interpretation;
+- lower-order/master-term exponent audit.
+
+Still open:
+- actual Lean compilation of candidate lemmas;
+- carrying `I*p` credit through `CostLog.RecCost`;
+- refined `CostLe` / `CostAggregate.Valid` without unconditional `t*p`;
+- new parameter program and master arithmetic;
+- full RAM refinement rebuild and kernel audit.
+
+## Evidence
+
+Repo:
 https://github.com/Anormalm/pivot
 
-Current PR:
+PR:
 https://github.com/Anormalm/pivot/pull/2
 
-Useful files:
-- `notes/exact_reselection_lemma.md`
+Best files for an author:
+- `notes/direct_N4_sharpening.md`
+- `drafts/paper_patch.md`
 - `notes/fresh_insert_audit.md`
-- `notes/lean_patch_plan.md`
-- `drafts/LoopCostFiniteCandidates.lean`
+- `notes/costlog_credit.md`
+- `notes/blocker_audit.md`
 - `results/LOCAL_EXPERIMENTS.md`
 
-## Experimental evidence
+The experiments are falsification checks, not theorem evidence.
 
-- 585,978 exhaustive states for the exact single-group adversarial
-  characterization.
-- 1,668,504 rooted-tree / 3-colour exhaustive cases.
-- 50,000 random tree/group stress trials.
-- 200,000 direct loop-telescope trials.
-- No violations observed in any of these falsification tests.
+## Subject
 
-These are sanity/falsification checks, not proof evidence for the full
-complexity theorem.
+Preferred:
 
-## Recommended email structure
+```text
+C-HD N4: can the full-call +1 per pivot group be removed?
+```
 
-Paragraph 1:
-- say you read the post and proof package;
-- identify the exact files/terms;
-- state the narrow suspected overcharge.
+Less technical fallback:
 
-Paragraph 2:
-- state the candidate one-group inequality;
-- explain the existing home/bichromatic-edge bridge.
-
-Paragraph 3:
-- mention the separate fresh BM.6 insert overcharge;
-- give the conditional parameter consequence in one sentence.
-
-Paragraph 4:
-- link the repo;
-- explicitly say the improved theorem is not yet proved;
-- ask the one narrow question.
-
-## Best subject line
-
+```text
 Possible tightening in C-HD pivot re-selection accounting
-
-Alternative, more technical:
-
-C-HD: can the full-call +1 per pivot group be removed?
-
-Avoid leading with "11/12 -> 7/8"; put that consequence in the body after the
-mechanism.
+```
