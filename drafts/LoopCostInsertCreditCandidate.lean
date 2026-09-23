@@ -272,10 +272,18 @@ theorem loopC_cost_insert_credit_candidate
           + I * (emptiedGroups σ Ui).card := by
       rw [← Nat.mul_add, hpot]
 
-    -- Omega treats products of variables as opaque atoms.  Rewrite the
-    -- current potential explicitly into the exact next+emptied form so the
-    -- atoms in `hit` and `ih'` line up before Presburger arithmetic.
-    rw [hpotI]
+    -- The window term also needs to be expanded explicitly: omega treats
+    -- products of variables as atoms, so it cannot infer distributivity.
+    have hJmul :
+        (1 + I) * (L'.length + J'.card)
+        =
+        (1 + I) * L'.length + (1 + I) * J'.card := by
+      ring
+
+    -- Add the current-step and tail inequalities only after their nonlinear
+    -- atoms have been aligned with the exact potential/window identities.
+    have hsum := Nat.add_le_add hit ih'
+    rw [hpotI, hJmul]
     omega
 
 end BM
