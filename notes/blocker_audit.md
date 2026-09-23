@@ -22,7 +22,9 @@ The concrete fresh-insert corollary `fresh_insManyC_cost_le_candidate` compiles;
 
 ## 3. Final residual group has an own/none home
 
-Status: RESOLVED-SOURCE / LOCAL-LEAN-COMPILED-CONDITIONAL / FORMAL-TRANSPORT-OPEN.
+Status: RESOLVED-SOURCE / LOCAL-LEAN-COMPILED.
+
+CI run 37 now also compiles the final-residual-to-W' group bound and the full-call terminal-credit theorem, so the residual-group credit itself is no longer conditional. The remaining `W' -> none` record-level bridge is only needed for the later global colour/CostLe step.
 
 The generic `none`-home colour lemma and the refined `mkOf + ownGroups` theorem compile under the explicit hypothesis that every `W'` vertex has home `none`. The record-level W' ownership provenance still needs to be wired.
 
