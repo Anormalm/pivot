@@ -58,7 +58,12 @@ See [`notes/lean_patch_plan.md`](notes/lean_patch_plan.md) for the file-by-file 
 See [`notes/new_parameter_route.md`](notes/new_parameter_route.md) for the square-root parameter retuning argument.
 See [`notes/prior_work.md`](notes/prior_work.md) for the dated prior-work audit.
 See [`notes/proof_status.md`](notes/proof_status.md) for a strict separation between established combinatorics, source-level overcharges, and the remaining Lean obligations.
-The first uncompiled source-aligned proof sketch is in [`drafts/loop_cost_refinement.md`](drafts/loop_cost_refinement.md).
+The uncompiled source-aligned proof sketches are in:
+- [`drafts/LoopCostFiniteCandidates.lean`](drafts/LoopCostFiniteCandidates.lean)
+- [`drafts/IterCostRefinedCandidate.lean`](drafts/IterCostRefinedCandidate.lean)
+- [`drafts/HomeOwnColourCandidate.lean`](drafts/HomeOwnColourCandidate.lean)
+- [`drafts/OwnHomeCandidates.lean`](drafts/OwnHomeCandidates.lean)
+- [`drafts/loop_cost_refinement.md`](drafts/loop_cost_refinement.md).
 
 ## Why the `+1` looks removable
 
@@ -197,6 +202,41 @@ total_marked + p <= total_meetings + own_groups
 Unlike the single-group stress test, this directly tests the telescope that
 would replace the current coarse child-meeting charge.
 
+### Exhaustive own-home colour check
+
+Command:
+
+```bash
+python experiments/own_home_colour.py --max-n 6 --num-homes 3
+```
+
+Committed summary: [`results/own_home_colour_summary.json`](results/own_home_colour_summary.json).
+
+Result:
+
+```text
+group subsets checked: 5,699,730
+violations:             0
+```
+
+For every nonempty group subset of every parent-first tree up to 6 vertices
+with 3 home colours, the checker verifies
+
+```text
+child homes represented + own-home indicator
+    = distinct homes represented
+
+distinct homes represented - 1
+    <= bichromatic parent edges of the containing piece.
+```
+
+This directly falsification-tests the proposed
+`mkOf + ownGroupsOf <= p + bich` bridge.
+
+The refined one-step cost algebra was also exhaustively checked on 85,293
+small natural-number assignments; see
+[`results/iter_cost_arithmetic_summary.json`](results/iter_cost_arithmetic_summary.json).
+
 These experiments are **falsification tests, not a proof**.
 
 ## Reproduce
@@ -210,6 +250,7 @@ cd pivot
 python experiments/reselection_exhaustive.py
 python experiments/random_reselection.py --trials 50000 --seed 20260923
 python experiments/loop_telescope.py --trials 200000 --seed 20260923
+python experiments/own_home_colour.py --max-n 6 --num-homes 3
 python experiments/exponent_sweep.py
 ```
 
