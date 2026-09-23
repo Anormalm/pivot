@@ -193,3 +193,78 @@ violations: 0
 ```
 
 See `results/iter_cost_arithmetic_summary.json`.
+
+
+## Experiment 7: full master-term exponent audit
+
+For
+`m = n log^alpha n`, `0 <= alpha <= 3/4`, with the candidate
+`t = log^((1-alpha)/2) n` and constant `k`, the audit enumerates the
+log-powers of every term still visible in the refined paper/master analysis:
+
+```text
+N log N / t
+m t
+N L
+N log N / t^2
+k^2 m
+N t
+m log delta
+m log(t delta)
+m
+N
+```
+
+Result:
+
+```json
+{
+  "alpha_range": [0.0, 0.75],
+  "rows": 160,
+  "terms_exceeding_candidate_power": 0
+}
+```
+
+The only same-power terms are the intended dominant balance
+`N log N/t`, `m t`, and `N L`; the paper-level `N t` extra ties only
+at `alpha=0` and is lower for `alpha>0`.
+
+The two `m log(...)` terms carry an additional `O(log log n)` factor but
+their log-power is `alpha < (1+alpha)/2` for every `alpha<1`, so they
+remain lower order throughout the certified `alpha<=3/4` window.
+
+See:
+- `experiments/master_term_audit.py`
+- `results/master_term_exponents.csv`
+- `results/master_term_summary.json`
+
+## Experiment 8: comparison with current directed bounds
+
+The comparison sweep records the logarithmic exponent of the candidate and
+the current Dijkstra, DMM25, DMSY26, and C-HD expressions for
+`m = n log^alpha n`.
+
+Observed over `0 < alpha <= 3/4`:
+
+```text
+candidate exponent (1+alpha)/2
+    < best current audited log-power.
+```
+
+At `alpha=0`, the log-power ties DMSY26 at `1/2`, but the candidate core
+does not contain DMSY26's `sqrt(log log n)` factor.
+
+At the Vals showcase profile `alpha=3/4`:
+
+```text
+current C-HD: 11/12
+candidate:     7/8
+```
+
+See:
+- `results/bound_comparison.csv`
+- `results/bound_comparison_summary.json`
+
+This broader conditional significance is a reason to keep the external
+claim conservative until the CostLog credit and parameter retuning are
+kernel-checked.
