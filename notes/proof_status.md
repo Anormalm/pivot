@@ -61,6 +61,23 @@ See `experiments/loop_telescope.py` and
 
 These experiments are falsification tests, not formal proof objects.
 
+### 4. Own-home colour bridge survives exhaustive finite checking
+
+The proposed per-group strengthening
+
+```text
+#children meeting P + [P contains an own/none home]
+    <= #distinct homes(P)
+```
+
+combined with the existing upstream colour lemma was checked on
+**5,699,730** nonempty group subsets of parent-first trees up to 6 vertices,
+with zero violations.
+
+A generic source-aligned candidate strengthening of
+`Ranges.card_children_meeting_le` is in
+`drafts/HomeOwnColourCandidate.lean`.
+
 ## Already available upstream and intended to be reused
 
 The C-HD snapshot already proves the tree-colour side:
@@ -79,6 +96,15 @@ new shortest-path correctness argument.
 ## Still unproved in upstream Lean
 
 ### P1. Exact emptying telescope over `LoopC`
+
+Source-aligned candidate finite-set lemmas are now written in
+`drafts/LoopCostFiniteCandidates.lean`, and a candidate refined
+one-iteration cost theorem is in `drafts/IterCostRefinedCandidate.lean`.
+
+These files are **uncompiled**; the next step is to check them in a real
+Lean/Lake environment.
+
+### P1a. Refined iteration potential
 
 Strengthen the current one-sided nonempty-group lemma to an equality and
 telescope `emptiedGroups` through the loop.
