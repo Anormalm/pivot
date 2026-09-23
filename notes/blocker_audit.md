@@ -40,7 +40,9 @@ Per iteration, marked and emptied groups are disjoint and both meet the child. E
 
 ## 5. Credit survives CostLog abstraction
 
-Status: LOCAL-LEAN-COMPILED-TRANSPORT / ROOT-CALL-OPEN.
+Status: LOCAL-LEAN-COMPILED-THROUGH-FULL-CALL.
+
+CI run 39 compiles `callC_cost_full_credit_given_init_candidate` against the actual `CallC` relation. Under a single explicit linear fresh-initialization hypothesis, the full recursive-call record cost preserves the `+I*p` credit and the `I*ownGroups` terminal term. The next global step is `CostLe` cancellation; the remaining local interface blocker is BM.6 `initCost` repricing.
 
 `RecCostCredit`, its shift lemma, and the loop-log credit transport compile in CI. The next open theorem is the recursive call/root-record assembly (`callC_reccost_credit`-style), followed by the `CostLe` cancellation.
 
