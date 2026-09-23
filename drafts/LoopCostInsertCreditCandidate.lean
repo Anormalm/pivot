@@ -193,7 +193,7 @@ theorem loopC_cost_insert_credit_candidate
 
     -- Exact emptying identity.
     have hpot :=
-      card_nonempty_next_eq_candidate σ P0 Ui
+      card_nonempty_next_eq_candidate σ Ui
     have hne_next :
         nonemptyCount
           (nextState B σ Bi B'i Ui D1 Di dsub L' piv')
