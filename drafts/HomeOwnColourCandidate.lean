@@ -1,7 +1,7 @@
 /-!
 # Candidate generic own-home colour lemma
 
-Status: UNCOMPILED source-aligned draft.
+Status: source-aligned candidate under CI.
 Natural upstream target:
   formal/lean/Frontier/Homes.lean
 
@@ -19,10 +19,10 @@ variable {F : CallForest ι V α}
 variable (R : Ranges F) (val : V → α)
 
 /-- If P contains a vertex with home `none`, then the direct children
-meeting P plus that extra own-home colour fit injectively inside the distinct
-home colours represented by P.
+meeting P plus that extra own-home colour fit inside the distinct home
+colours represented by P.
 
-This is the exact per-group inequality needed for the refined C-HD
+This is the per-group inequality needed for the refined C-HD
 `mkOf + ownGroupsOf` charge.
 -/
 theorem card_children_meeting_add_one_le_of_none_candidate
@@ -34,59 +34,37 @@ theorem card_children_meeting_add_one_le_of_none_candidate
       ≤
     (P.image (R.home val X)).card := by
   classical
-
   let C : Finset ι :=
     Finset.univ.filter
       (fun Y => F.parent Y = some X ∧ (P ∩ F.U Y).Nonempty)
-
-  have hsomeSub :
-      C.image (fun Y => (some Y : Option ι))
-        ⊆ P.image (R.home val X) := by
-    intro oy hoy
-    obtain ⟨Y, hYC, rfl⟩ := Finset.mem_image.mp hoy
-    obtain ⟨hpar, v, hv⟩ := (Finset.mem_filter.mp hYC).2
-    obtain ⟨hvP, hvU⟩ := Finset.mem_inter.mp hv
-    exact Finset.mem_image.mpr
-      ⟨v, hvP, home_of_mem hpar hvU⟩
+  let H : Finset (Option ι) := P.image (R.home val X)
 
   obtain ⟨v0, hv0P, hv0none⟩ := hnone
-  have hnoneMem :
-      (none : Option ι) ∈ P.image (R.home val X) :=
-    Finset.mem_image.mpr ⟨v0, hv0P, hv0none⟩
+  have hnoneMem : (none : Option ι) ∈ H := by
+    exact Finset.mem_image.mpr ⟨v0, hv0P, hv0none⟩
 
-  have hnoneNot :
-      (none : Option ι) ∉ C.image (fun Y => (some Y : Option ι)) := by
-    simp
+  have hchildren :
+      C.card ≤ (H.erase (none : Option ι)).card := by
+    refine Finset.card_le_card_of_injOn
+      (fun Y : ι => (some Y : Option ι)) ?_ ?_
+    · intro Y hY
+      have hYC : Y ∈ C := hY
+      simp only [C, Finset.mem_filter, Finset.mem_univ, true_and] at hYC
+      obtain ⟨hpar, v, hv⟩ := hYC
+      obtain ⟨hvP, hvU⟩ := Finset.mem_inter.mp hv
+      rw [Finset.mem_erase]
+      refine ⟨by simp, ?_⟩
+      exact Finset.mem_image.mpr
+        ⟨v, hvP, home_of_mem hpar hvU⟩
+    · intro Y1 _ Y2 _ heq
+      exact Option.some.inj heq
 
-  have hcardSome :
-      (C.image (fun Y => (some Y : Option ι))).card = C.card := by
-    rw [Finset.card_image_of_injOn]
-    intro a _ b _ hab
-    exact Option.some.inj hab
+  have hcard :
+      (H.erase (none : Option ι)).card + 1 = H.card :=
+    Finset.card_erase_add_one hnoneMem
 
-  have hunionSub :
-      insert (none : Option ι)
-          (C.image (fun Y => (some Y : Option ι)))
-        ⊆ P.image (R.home val X) := by
-    intro z hz
-    simp only [Finset.mem_insert] at hz
-    rcases hz with rfl | hz
-    · exact hnoneMem
-    · exact hsomeSub hz
-
-  have hcardInsert :
-      (insert (none : Option ι)
-          (C.image (fun Y => (some Y : Option ι)))).card
-        =
-      C.card + 1 := by
-    rw [Finset.card_insert_of_notMem hnoneNot, hcardSome]
-    omega
-
-  have hle :=
-    Finset.card_le_card hunionSub
-
-  change C.card + 1 ≤ (P.image (R.home val X)).card
-  rw [← hcardInsert]
-  exact hle
+  change C.card + 1 ≤ H.card
+  rw [← hcard]
+  exact Nat.add_le_add_right hchildren 1
 
 end Frontier.Density.Ranges
