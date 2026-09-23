@@ -50,7 +50,7 @@ jobs:
 
       - name: Build required upstream modules
         working-directory: upstream/formal/lean
-        run: lake build Frontier.CHD.LoopCost Frontier.Homes Frontier.CHD.DLazyFacts
+        run: lake build Frontier.CHD.LoopCost Frontier.Homes Frontier.CHD.DLazyFacts Frontier.CHD.CrBe
 
       - name: Prepare candidate modules
         shell: bash
@@ -82,6 +82,12 @@ jobs:
             cat drafts/FreshInsertCandidate.lean
           } > upstream/formal/lean/CandidateFreshInsert.lean
 
+          {
+            echo 'import Frontier.CHD.CrBe'
+            cat drafts/HomeOwnColourCandidate.lean
+            cat drafts/MkOwnColourCandidate.lean
+          } > upstream/formal/lean/CandidateMkOwnColour.lean
+
       - name: Check all candidate modules
         working-directory: upstream/formal/lean
         shell: bash
@@ -102,6 +108,9 @@ jobs:
           echo "::group::CandidateFreshInsert"
           lake env lean CandidateFreshInsert.lean || status=1
           echo "::endgroup::"
+          echo "::group::CandidateMkOwnColour"
+          lake env lean CandidateMkOwnColour.lean || status=1
+          echo "::endgroup::"
           exit "$status"
 
-# candidate set revision: 6
+# candidate set revision: 7
