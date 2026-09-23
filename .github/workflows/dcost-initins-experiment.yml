@@ -1,0 +1,47 @@
+name: DCost initIns experiment
+
+on:
+  push:
+    branches: [loop-telescope]
+    paths:
+      - 'ci/patch_initins.py'
+      - '.github/workflows/dcost-initins-experiment.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  patch-radius:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Checkout pinned C-HD
+        uses: actions/checkout@v4
+        with:
+          repository: spicylemonade/c-hd-proof
+          ref: 98c53accb47a505482a1781597ae14bf67e81cec
+          path: upstream
+
+      - name: Install Lean
+        uses: leanprover/lean-action@v1
+        with:
+          lake-package-directory: upstream/formal/lean
+          auto-config: false
+          build: false
+          test: false
+          lint: false
+          use-github-cache: false
+
+      - name: Fetch Mathlib cache
+        working-directory: upstream/formal/lean
+        run: lake exe cache get
+
+      - name: Apply initIns patch
+        run: python ci/patch_initins.py
+
+      - name: Build patched cost stack
+        working-directory: upstream/formal/lean
+        run: |
+          lake build Frontier.CHD.LoopCost Frontier.CHD.CostLog Frontier.CHD.BMTeleChd Frontier.CHD.L6.DCap
