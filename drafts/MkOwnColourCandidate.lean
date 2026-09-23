@@ -102,24 +102,39 @@ theorem mkOwn_full_le_of_W'_none_candidate
           ((forestGroups (lg.recOf X).S (lg.recOf X).Q k ω.trees).map
             (fun g => (g.map (homeX hL X)).toFinset.card)).sum := by
         refine Reselect.map_sum_le _ _ _ (fun g _ => ?_)
+        have heq :
+            g.toFinset.image
+                ((BM.Log.ranges hL).home
+                  (fun v => dis (s := s) v) X)
+              =
+            (g.map (homeX hL X)).toFinset := by
+          ext z
+          simp [homeX]
         by_cases hown :
             (g.toFinset ∩ (lg.recOf X).W').Nonempty
         · simp only [if_pos hown]
           obtain ⟨v, hv⟩ := hown
           obtain ⟨hvG, hvW⟩ := Finset.mem_inter.mp hv
           have hnone :
-              ∃ z ∈ g.toFinset, homeX hL X z = none :=
-            ⟨v, hvG, hWnone v hvW⟩
-          exact
+              ∃ z ∈ g.toFinset,
+                (BM.Log.ranges hL).home
+                  (fun v => dis (s := s) v) X z = none := by
+            refine ⟨v, hvG, ?_⟩
+            simpa [homeX] using hWnone v hvW
+          have htmp :=
             (BM.Log.ranges hL).
               card_children_meeting_add_one_le_of_none_candidate
                 (val := fun v => dis (s := s) v)
                 X g.toFinset hnone
+          rw [heq] at htmp
+          exact htmp
         · simp only [if_neg hown, Nat.add_zero]
-          exact
+          have htmp :=
             (BM.Log.ranges hL).card_children_meeting_le
               (val := fun v => dis (s := s) v)
               X g.toFinset
+          rw [heq] at htmp
+          exact htmp
 
       have h2 :=
         Reselect.groups_colors_le
