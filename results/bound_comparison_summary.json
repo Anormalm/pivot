@@ -1,0 +1,12 @@
+{
+  "range": [
+    0,
+    0.75
+  ],
+  "strictly_lower_power_for_alpha_gt_0": true,
+  "alpha_0": "candidate has n sqrt(log n) core power; DMSY26 has n sqrt(log n log log n), so the power ties but the candidate removes sqrt(log log n)",
+  "alpha_0_75": {
+    "current_C_HD": 0.9166666666666666,
+    "candidate": 0.875
+  }
+}
