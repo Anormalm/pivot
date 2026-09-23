@@ -1,0 +1,19 @@
+{
+  "date": "2026-09-23",
+  "max_group_size": 8,
+  "max_child_home_labels": 4,
+  "states_checked": 585978,
+  "violations": 0,
+  "elapsed_seconds": 16.712504386901855,
+  "formula": "max reselections = #child homes if own-home present, else max(0,#child homes-1)",
+  "states_by_group_size": {
+    "1": 10,
+    "2": 50,
+    "3": 220,
+    "4": 974,
+    "5": 4420,
+    "6": 20510,
+    "7": 96820,
+    "8": 462974
+  }
+}
