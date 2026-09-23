@@ -162,3 +162,196 @@ child meetings + final residual groups
 ```
 
 can be bounded by the existing home-colour/PT-piece machinery. This is the route to removing the `+p` only from the expensive `O(t)` part while keeping the safe `O(k) * p` scan charge.
+
+
+## 6. Correct potential orientation for the loop theorem
+
+Inspecting the upstream proof shows that the refined insertion credit should
+not reuse the current potential orientation.
+
+The current theorem is:
+
+```lean
+c + g * nonemptyCount sigma'
+  <=
+1 + g * nonemptyCount sigma
+  + childSum ...
+  + (1 + I) * J.card
+```
+
+That orientation is appropriate for paying the pulled-group expansion term
+with a `g * emptied` credit, but it does not expose the desired negative
+once-per-group insertion term.
+
+For the BM.23 insertion refinement, use the exact identity
+
+```text
+nonempty_now = nonempty_next + emptied
+```
+
+and
+
+```text
+marked + emptied <= meeting.
+```
+
+Then
+
+```text
+I * marked + I * nonempty_now
+  <=
+I * meeting + I * nonempty_next.
+```
+
+So the refined loop theorem should put the insertion potential in the
+**opposite direction**:
+
+```lean
+/-- Candidate refined main-loop cost theorem.
+    The expensive insertion potential flows from the initial nonempty groups
+    to the final residual groups. -/
+theorem loopC_cost_refined
+    (hpre : CallPre B S d0)
+    (hfp : FPContract B S d0 d1 p P0 Q W)
+    {tau : Nat -> Nat} {Inv : Phi -> Prop}
+    {sub : SubRelC G s Phi Omega} {l : Nat}
+    (hsub : GoodSub G s tau Inv l sub)
+    {taul : Nat} {ap bp ad bd I g : Nat}
+    (hpull : forall x, DC.pull (l + 1) x <= ap * x + bp)
+    (hdel : forall x, DC.del (l + 1) x <= ad * x + bd)
+    (hins : DC.ins (l + 1) <= I)
+    (hP0 : forall j, (P0 j).card <= g)
+    (hMtau : DC.M (l + 1) <= tau l)
+    (hgMtau : g * DC.M (l + 1) <= tau l) :
+    forall i (sigma : LState G s p) phi sigma' phi' lg J cm c,
+      LoopC G s DC sub (l + 1) B taul i sigma phi sigma' phi' lg J cm c ->
+      LInv G s B S d0 d1 P0 B'0 sigma ->
+      Inv phi ->
+      c + I * nonemptyCount sigma
+        <=
+      1
+        + childSum
+            (childCharge P0
+              (1 + bp + bd)
+              (ap + ad + 4)
+              (2 * g + 1 + I))
+            lg
+        + (1 + I) * J.card
+        + I * nonemptyCount sigma'
+```
+
+The exact theorem may need an additional cheap `g`-potential term if the
+existing pulled-group algebra is reused verbatim. The preferred route is to
+absorb all `g(marked+emptied)` work directly into the same meeting count
+using `marked_emptied_card_le_meeting`, which makes the pure `I` potential
+above sufficient.
+
+### One-step algebra
+
+Let
+
+```text
+M = marked.card
+E = emptied.card
+R = meeting.card.
+```
+
+The group-dependent iteration work is bounded by
+
+```text
+g(M+E) + (g+1+I)M.
+```
+
+Adding the current potential gives
+
+```text
+g(M+E) + (g+1+I)M + I * nonempty_now
+```
+
+and substituting
+
+```text
+nonempty_now = nonempty_next + E
+```
+
+yields
+
+```text
+g(M+E)
++ (g+1+I)M
++ I E
++ I * nonempty_next.
+```
+
+The first three terms satisfy
+
+```text
+g(M+E) + (g+1+I)M + I E
+<= (2g+1+I)(M+E)
+<= (2g+1+I)R.
+```
+
+Therefore the iteration transitions exactly into the next state's
+`I * nonemptyCount` potential.
+
+### Why this creates the desired `-Ip`
+
+At loop entry every original pivot group is nonempty, so the strengthened
+entry fact should be
+
+```text
+nonemptyCount (initState ...) = p
+```
+
+rather than the current one-sided `<= p`.
+
+The refined loop theorem then gives
+
+```text
+loop_cost + I p
+<= cheap_meeting_charge + I * final_nonempty.
+```
+
+For a full call:
+
+```text
+final_nonempty <= ownGroupsOf.
+```
+
+The refined home-colour bound gives
+
+```text
+mkOf + ownGroupsOf <= p + |Cr| + |Be|.
+```
+
+Since the child charge contributes `I * mkOf`, the three inequalities combine
+without natural-number subtraction:
+
+```text
+loop_cost + I p
+<= cheap + I * mkOf + I * ownGroupsOf
+<= cheap + I p + I(|Cr| + |Be|).
+```
+
+Cancel `I p` on both sides to obtain
+
+```text
+loop_cost <= cheap + I(|Cr| + |Be|).
+```
+
+This is the exact formal shape needed to remove the expensive once-per-group
+term while leaving the safe `O(g p)=O(kp)` work untouched.
+
+## 7. Immediate Lean implementation order
+
+1. Compile `card_nonempty_next_eq`.
+2. Compile `emptied_sub_meeting`.
+3. Compile `marked_emptied_card_le_meeting`.
+4. Add `iterCost_le_with_empty_credit`.
+5. Prove the strengthened entry equality
+   `nonemptyCount (initState ...) = p` from `FPContract.groups`.
+6. Clone `loopC_cost` into `loopC_cost_refined` and change only the
+   potential algebra.
+7. Only after this compiles, introduce `ownGroupsOf` in `CrBe.lean`.
+
+No shortest-path correctness lemma needs to change in steps 1--6.
