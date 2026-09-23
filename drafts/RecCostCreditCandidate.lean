@@ -111,6 +111,16 @@ theorem callC_reccost_credit ...
   ...
 -/
 
+/-- Original groups containing a parent-final W' vertex.
+
+No CallRec field is added: W' and the pinned FindPivots groups already live
+in the record.
+-/
+noncomputable def ownGroupsCredit
+    (k : ℕ) (r : CallRec G s (FPData G s)) : ℕ :=
+  (groupsOf k r).countP
+    (fun g => decide (g.toFinset ∩ r.W').Nonempty)
+
 /--
 Refined record budget shape.
 
@@ -118,7 +128,8 @@ This sketch intentionally does NOT include the old generic p*(2+I) term:
 - BM.6 fresh insertion is priced O(p), not I*p;
 - cheap O(k p) work remains explicitly cheap;
 - full-call expensive I*p is carried as a left credit;
-- partial-call expensive pivot work is paid by I*|S| / t*|S|.
+- the final nonempty-group potential is paid by I*ownGroups on full calls;
+- on partial calls both markings and final residual groups are bounded by S.
 -/
 noncomputable def budCreditSketch
     (k hins hext ad bd initC I nw : ℕ)
@@ -129,6 +140,9 @@ noncomputable def budCreditSketch
     + 3 * r.S.card
     + (nw + r.S.card + initC * r.p)
     + (1 + 3 * k * r.p + cs + (1 + I) * r.J.card)
+    + (if r.B' = r.B
+        then I * ownGroupsCredit k r
+        else I * r.S.card)
     + r.cMerge
     + (1 + r.S.card
         + (if r.B' = r.B then 0 else r.S.card) * I
@@ -143,15 +157,25 @@ At CostLe, for a FULL call X:
   mkOf + ownGroups <= p + Cr + Be
 
 The child/loop algebra is arranged so that the I-weighted part of budCredit
-contains I*(mkOf + ownGroups).  Substitution gives another I*p on the RHS,
-which cancels the record credit.
+contains:
+  I*mkOf from the child meeting sum, and
+  I*ownGroupsCredit from the final nonempty-group potential.
+
+Thus a FULL call has
+  cost + I*p
+    <= cheap + I*(mkOf + ownGroupsCredit) + ...
+and the refined colour lemma
+  mkOf + ownGroupsCredit <= p + Cr + Be
+supplies the matching RHS I*p, which cancels the record credit.
 
 For a PARTIAL call:
   fullPivotCredit = 0,
   p <= |S|,
-  3k <= t,
-so all remaining O(k p) / O(I p) work is absorbed by the existing t*|S|
-partial-call term.
+  mkOf <= |S|,
+  final nonempty groups <= p <= |S|,
+  3k <= t.
+So all remaining O(k p), I*mkOf, and I*finalNonempty work is absorbed by
+a constant number of existing t*|S| terms.
 
 The final CostAggregate.Valid target therefore needs no unconditional t*p.
 -/
