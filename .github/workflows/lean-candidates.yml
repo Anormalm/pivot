@@ -70,6 +70,13 @@ jobs:
             cat drafts/HomeOwnColourCandidate.lean
           } > upstream/formal/lean/CandidateHomeOwnColour.lean
 
+          {
+            echo 'import Frontier.CHD.LoopCost'
+            cat drafts/LoopCostFiniteCandidates.lean
+            cat drafts/IterCostRefinedCandidate.lean
+            cat drafts/LoopCostInsertCreditCandidate.lean
+          } > upstream/formal/lean/CandidateLoopInsertCredit.lean
+
       - name: Check all candidate modules
         working-directory: upstream/formal/lean
         shell: bash
@@ -84,6 +91,9 @@ jobs:
           echo "::group::CandidateHomeOwnColour"
           lake env lean CandidateHomeOwnColour.lean || status=1
           echo "::endgroup::"
+          echo "::group::CandidateLoopInsertCredit"
+          lake env lean CandidateLoopInsertCredit.lean || status=1
+          echo "::endgroup::"
           exit "$status"
 
-# candidate set revision: 4
+# candidate set revision: 5
