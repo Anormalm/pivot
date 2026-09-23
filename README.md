@@ -54,6 +54,7 @@ n log^(11/12) n  ->  n log^(7/8) n.
 
 See [`notes/analysis.md`](notes/analysis.md) for the derivation and the exact
 remaining proof obligations.
+See [`notes/lean_patch_plan.md`](notes/lean_patch_plan.md) for the file-by-file Lean patch plan.
 
 ## Why the `+1` looks removable
 
