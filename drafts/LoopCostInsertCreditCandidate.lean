@@ -272,6 +272,10 @@ theorem loopC_cost_insert_credit_candidate
           + I * (emptiedGroups σ Ui).card := by
       rw [← Nat.mul_add, hpot]
 
+    -- Omega treats products of variables as opaque atoms.  Rewrite the
+    -- current potential explicitly into the exact next+emptied form so the
+    -- atoms in `hit` and `ih'` line up before Presburger arithmetic.
+    rw [hpotI]
     omega
 
 end BM
