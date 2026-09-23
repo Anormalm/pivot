@@ -1,0 +1,15 @@
+{
+  "alpha_range": [
+    0,
+    0.75
+  ],
+  "rows": 160,
+  "terms_exceeding_candidate_power": 0,
+  "same_power_terms": [
+    "N_L_constant_k",
+    "N_logN_over_t",
+    "N_t_A_M_extra",
+    "m_t"
+  ],
+  "note": "m_log_delta and m_log_tdelta carry O(log log n) factors but their log-power alpha is strictly below (1+alpha)/2 for alpha<1. N_t matches only at alpha=0 and is lower for alpha>0."
+}
