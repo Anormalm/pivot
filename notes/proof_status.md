@@ -5,7 +5,7 @@ Date: 2026-09-23
 This note separates what is already elementary/source-level from what still
 has to be proved inside the upstream C-HD formal cost chain.
 
-## Established outside the upstream Lean build
+## Established / locally compiled against the upstream snapshot
 
 ### 1. Exact one-group re-selection combinatorics
 
@@ -95,16 +95,32 @@ new shortest-path correctness argument.
 
 ## Still unproved in upstream Lean
 
-### P1. Exact emptying telescope over `LoopC`
+### P1. Finite-set and one-iteration layer — COMPILED
 
-Source-aligned candidate finite-set lemmas are now written in
-`drafts/LoopCostFiniteCandidates.lean`, and a candidate refined
-one-iteration cost theorem is in `drafts/IterCostRefinedCandidate.lean`.
+GitHub Actions checks the candidates against the exact audited C-HD snapshot
+`98c53acc...` using Lean 4.34.0.
 
-These files are **uncompiled**; the next step is to check them in a real
-Lean/Lake environment.
+The following modules compiled without errors in workflow run
+`35839815618`:
 
-### P1a. Refined iteration potential
+- `drafts/LoopCostFiniteCandidates.lean`
+  - exact nonempty/emptying partition;
+  - emptied groups meet the child;
+  - marked and emptied groups are disjoint;
+  - `marked + emptied <= meetings`.
+- `drafts/IterCostRefinedCandidate.lean`
+  - refined one-step cost inequality with `I * emptied` credit;
+  - exact loop-entry nonempty-group count.
+- `drafts/HomeOwnColourCandidate.lean`
+  - generic extra-`none` home colour lemma.
+- `drafts/FreshInsertCandidate.lean`
+  - fresh one-block insertion bound.
+
+The same CI run localized the remaining failures to the aggregate loop
+telescope and aggregate own-home colour theorem; no error was reported in
+the four modules above.
+
+### P1a. Refined loop insertion-credit telescope — IN CI
 
 Strengthen the current one-sided nonempty-group lemma to an equality and
 telescope `emptiedGroups` through the loop.
@@ -115,15 +131,24 @@ Target shape:
 total_marked + p <= mkOf(X) + ownGroupsOf(X).
 ```
 
-### P2. Residual group -> own `none` home
+### P2. Residual group -> own `none` home — SOURCE CLOSED / TRANSPORT OPEN
 
-For a full call, show that every group still nonempty after the child loop
-meets the parent's final `W'` region, and that such members have
-`home_X = none`.
+For a full call, every group still nonempty after the child loop meets the
+parent's final `W'` region, and such a member is in the parent return but
+in no direct child return.  The existing `Ranges.home` definition therefore
+returns `none`.
 
-### P3. Refined colour inequality with own groups
+Upstream `BMTrace.callC_log` already contains this exact ownership argument
+locally for sources of `W'` relaxation edges.  The remaining work is to
+export/generalize it for arbitrary `W'` vertices in the traced log.
 
-Prove:
+### P3. Refined colour inequality with own groups — IN CI
+
+The generic extra-`none` colour lemma already compiles.  The aggregate
+`MkOwnColourCandidate` proof is being checked after repairing only the
+bridge from `Finset.image home` to `(List.map home).toFinset`.
+
+Target:
 
 ```text
 mkOf(X) + ownGroupsOf(X)
@@ -138,15 +163,28 @@ total_marked <= |Cr(X)| + |Be(X)|.
 
 This is the key removal of the expensive once-per-group insertion charge.
 
-### P4. Separate fresh and evolved insertion costs
+### P4. Separate fresh and evolved insertion costs — LOCAL LEMMA COMPILED
 
-Refine `DCost.initCost` so BM.6 uses the source-level constant fresh-insert
-bound while BM.23/BM.25/BM.28 retain the ordinary evolved `DC.ins(l)`
-charge.
+The fresh one-block insertion lemma compiles against the upstream snapshot.
+The remaining task is interface integration: refine `DCost/initCost` so
+BM.6 consumes that constant bound while BM.23/BM.25/BM.28 retain the evolved
+`DC.ins(l)` charge.
 
-### P5. Re-run master algebra and parameter arithmetic
+### P5. Preserve the `I*p` credit through CostLog — FORMAL ARCHITECTURE OPEN
 
-Only after P1--P4 close should the parameters be changed to the candidate
+The strengthened loop theorem naturally carries `cost + I*p` for full
+calls.  Current `RecCost/budOf` discards that credit before `CostLe`
+sees the global `Cr/Be` counters.
+
+The current preferred patch is a generic
+`RecCostCredit` relation, drafted in
+`drafts/RecCostCreditCandidate.lean`, with a record-local full-call credit
+`I*p`.  No change to shortest-path semantics, `CallRec`, or `LogInv`
+is required.
+
+### P6. Re-run master algebra and parameter arithmetic
+
+Only after the remaining P1a/P2/P3/P4/P5 integration closes should the parameters be changed to the candidate
 
 ```text
 k = 4
@@ -168,7 +206,7 @@ At `m = n log^(3/4) n`, this would change the dominant logarithmic exponent
 
 ## Claim discipline
 
-Until P1--P5 are compiled and integrated into the upstream model, this
+Until the aggregate lemmas, credit-carrying cost chain, and parameter layer are compiled and integrated into the upstream model, this
 repository should say:
 
 - "candidate refinement";
