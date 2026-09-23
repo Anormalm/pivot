@@ -91,7 +91,7 @@ Recommended credit for the refined C-HD accounting.
 Only FULL recursive calls receive the expensive insertion credit.
 Partial calls keep zero credit and retain the existing t*|S| budget.
 -/
-def fullPivotCredit (I : ℕ)
+noncomputable def fullPivotCredit (I : ℕ)
     (r : CallRec G s Ω) : ℕ :=
   if r.B' = r.B then I * r.p else 0
 
@@ -116,7 +116,7 @@ theorem callC_reccost_credit ...
 No CallRec field is added: W' and the pinned FindPivots groups already live
 in the record.
 -/
-noncomputable noncomputable def ownGroupsCredit
+noncomputable def ownGroupsCredit
     (k : ℕ) (r : CallRec G s (FPData G s)) : ℕ :=
   (groupsOf k r).countP
     (fun g => decide (g.toFinset ∩ r.W').Nonempty)
