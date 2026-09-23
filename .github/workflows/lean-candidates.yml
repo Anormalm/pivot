@@ -72,3 +72,5 @@ jobs:
       - name: Check own-home colour candidate
         working-directory: upstream/formal/lean
         run: lake env lean CandidateHomeOwnColour.lean
+
+# candidate set revision: 2
