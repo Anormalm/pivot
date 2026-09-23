@@ -6,31 +6,41 @@ Status labels: RESOLVED-SOURCE means the relevant fact already exists upstream; 
 
 ## 1. Full-call +1 in N4
 
-Status: PAPER-CLOSED / FORMAL-OPEN.
+Status: PAPER-CLOSED / LOCAL-LEAN-COMPILED.
+
+The local finite-set / loop-credit implementation now compiles against Lean 4.34.0 and upstream commit `98c53acc...` in GitHub Actions (run 33). The final global call-cost rewiring is still open.
 
 Upstream concludes `g_j <= c_j+1` because c_j bichromatic edges leave c_j+1 monochromatic components. BM.23 re-selects only when the residual group is nonempty, so there is always one additional terminal home/component beyond the g_j re-selection homes. Therefore `g_j <= c_j` at paper level.
 
 ## 2. Initial pivot insertion charged as O(t)
 
-Status: RESOLVED-SOURCE / FORMAL-INTERFACE-OPEN.
+Status: RESOLVED-SOURCE / LOCAL-LEAN-COMPILED / FORMAL-INTERFACE-OPEN.
+
+The concrete fresh-insert corollary `fresh_insManyC_cost_le_candidate` compiles; replacing the abstract `initCost` use of generic `DC.ins` remains open.
 
 `newC` starts with one block; upstream `insertL_blocks` / `insManyC_blocks` preserve block count; `insManyC_cost_le` with NB=1 gives constant cost per initial pivot. The remaining work is to stop `BMCost.initCost` from using the generic evolved-structure insertion charge.
 
 ## 3. Final residual group has an own/none home
 
-Status: RESOLVED-SOURCE / FORMAL-TRANSPORT-OPEN.
+Status: RESOLVED-SOURCE / LOCAL-LEAN-COMPILED-CONDITIONAL / FORMAL-TRANSPORT-OPEN.
+
+The generic `none`-home colour lemma and the refined `mkOf + ownGroups` theorem compile under the explicit hypothesis that every `W'` vertex has home `none`. The record-level W' ownership provenance still needs to be wired.
 
 `LInv.Pmem` puts residual group members outside accumulated child U. A full call returns S, and the final result is `sigma.U union W'`, so residual members lie in W'. Upstream `BMTrace.callC_log` already uses the same argument to prove `wr_own` for sources of W' relaxation edges. `Ranges.home` returns none for parent-returned vertices in no child.
 
 ## 4. I-weighted emptying telescope
 
-Status: PAPER-CLOSED / FORMAL-OPEN.
+Status: PAPER-CLOSED / LOCAL-LEAN-COMPILED.
+
+`iterCost_le_with_empty_credit_candidate` and `loopC_cost_insert_credit_candidate` compile against the pinned upstream snapshot.
 
 Per iteration, marked and emptied groups are disjoint and both meet the child. Exact identity: `nonempty_next + emptied = nonempty_now`. This yields an I-weighted telescope and isolates the expensive insertion coefficient on actual marked events.
 
 ## 5. Credit survives CostLog abstraction
 
-Status: FORMAL-OPEN; currently the largest proof-engineering issue.
+Status: LOCAL-LEAN-COMPILED-TRANSPORT / ROOT-CALL-OPEN.
+
+`RecCostCredit`, its shift lemma, and the loop-log credit transport compile in CI. The next open theorem is the recursive call/root-record assembly (`callC_reccost_credit`-style), followed by the `CostLe` cancellation.
 
 The useful inequality has `cost + I*p` on the left. Existing `RecCost/budOf` retains only an ordinary nonnegative upper bound on cost, so a refined interface must carry the credit until `CostLe` can cancel it using the global Cr/Be bound.
 
@@ -78,6 +88,6 @@ The closest published directed deterministic comparison-addition bound remains D
 
 ## 13. Kernel compilation
 
-Status: OPEN.
+Status: PARTIAL-COMPILE-PASS.
 
-The current working environment has no Lean/Lake toolchain and no shell network access. All candidate Lean files in this repository are explicitly marked uncompiled. Final theorem claims wait on an actual Lean 4.34 build and kernel audit.
+GitHub Actions run 33 compiled the current local candidate suite using Lean 4.34.0 against exact upstream commit `98c53accb47a505482a1781597ae14bf67e81cec`. This is not yet a full patched C-HD build or kernel audit. The root-call cost theorem, CostLe cancellation, DCost fresh-init interface, parameter retuning, and top-level rebuild remain open.
