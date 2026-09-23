@@ -16,6 +16,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: lean-candidates-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   candidate-lemmas:
     runs-on: ubuntu-latest
@@ -66,16 +70,20 @@ jobs:
             cat drafts/HomeOwnColourCandidate.lean
           } > upstream/formal/lean/CandidateHomeOwnColour.lean
 
-      - name: Check finite-set candidates
+      - name: Check all candidate modules
         working-directory: upstream/formal/lean
-        run: lake env lean CandidateLoopCostFinite.lean
+        shell: bash
+        run: |
+          status=0
+          echo "::group::CandidateLoopCostFinite"
+          lake env lean CandidateLoopCostFinite.lean || status=1
+          echo "::endgroup::"
+          echo "::group::CandidateIterCost"
+          lake env lean CandidateIterCost.lean || status=1
+          echo "::endgroup::"
+          echo "::group::CandidateHomeOwnColour"
+          lake env lean CandidateHomeOwnColour.lean || status=1
+          echo "::endgroup::"
+          exit "$status"
 
-      - name: Check refined iter-cost candidate
-        working-directory: upstream/formal/lean
-        run: lake env lean CandidateIterCost.lean
-
-      - name: Check own-home colour candidate
-        working-directory: upstream/formal/lean
-        run: lake env lean CandidateHomeOwnColour.lean
-
-# candidate set revision: 3
+# candidate set revision: 4
