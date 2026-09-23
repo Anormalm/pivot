@@ -116,7 +116,7 @@ theorem callC_reccost_credit ...
 No CallRec field is added: W' and the pinned FindPivots groups already live
 in the record.
 -/
-noncomputable def ownGroupsCredit
+noncomputable noncomputable def ownGroupsCredit
     (k : ℕ) (r : CallRec G s (FPData G s)) : ℕ :=
   (groupsOf k r).countP
     (fun g => decide (g.toFinset ∩ r.W').Nonempty)
