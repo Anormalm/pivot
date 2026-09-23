@@ -1,0 +1,13 @@
+{
+  "seed": 20260923,
+  "requested_trials": 50000,
+  "completed_trials": 50000,
+  "violations": 0,
+  "max_n": 24,
+  "max_homes": 8,
+  "mean_current_slack": 8.4919,
+  "mean_proposed_slack": 7.4919,
+  "tight_proposed_fraction": 0.02196,
+  "mean_current_ratio_when_actual_positive": 5.427152468887296,
+  "mean_proposed_ratio_when_actual_positive": 4.877526737778302
+}
