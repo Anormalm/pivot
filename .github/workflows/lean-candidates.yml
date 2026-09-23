@@ -38,10 +38,15 @@ jobs:
           build: false
           test: false
           lint: false
+          use-github-cache: false
 
       - name: Fetch pinned Mathlib cache
         working-directory: upstream/formal/lean
         run: lake exe cache get
+
+      - name: Build required upstream modules
+        working-directory: upstream/formal/lean
+        run: lake build Frontier.CHD.LoopCost Frontier.Homes
 
       - name: Prepare candidate modules
         shell: bash
@@ -73,4 +78,4 @@ jobs:
         working-directory: upstream/formal/lean
         run: lake env lean CandidateHomeOwnColour.lean
 
-# candidate set revision: 2
+# candidate set revision: 3
