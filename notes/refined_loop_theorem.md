@@ -149,3 +149,81 @@ loopCost <= cheap + I(|Cr| + |Be|).
 ```
 
 No natural-number subtraction is required.
+
+
+## Algebraic simplification: no split child-charge interface is required
+
+A closer look at the call-level algebra shows that the existing child-charge
+coefficient can remain
+
+```text
+C2 = 2g + 1 + I.
+```
+
+Let
+
+```text
+X = |Cr| + |Be|.
+```
+
+After the refined loop telescope and the final-residual bound, the relevant
+full-call term has the shape
+
+```text
+C2 * mk + I * own.
+```
+
+Rewrite it exactly as
+
+```text
+C2*mk + I*own
+  = (2g+1)*mk + I*(mk+own).
+```
+
+Now use two bounds:
+
+```text
+mk       <= p + X        -- already available upstream
+mk + own <= p + X        -- new refined home-colour lemma
+```
+
+to get
+
+```text
+C2*mk + I*own
+  <= (2g+1)(p+X) + I(p+X)
+  = C2(p+X).
+```
+
+The refined loop theorem has `I*p` on its left at call entry:
+
+```text
+loopCost + I*p
+  <= cheap + C2*mk + I*own
+  <= cheap + C2*p + C2*X.
+```
+
+Since
+
+```text
+C2*p = (2g+1)*p + I*p,
+```
+
+cancelling the common `I*p` yields
+
+```text
+loopCost
+  <= cheap
+   + (2g+1)*p
+   + (2g+1+I)*X.
+```
+
+So:
+
+- the per-group term keeps only the cheap `O(g)=O(k)` coefficient;
+- the expensive `I=O(t)` coefficient is attached only to `Cr/Be`;
+- **no new split field in `childCharge` is necessary**.
+
+This materially reduces the proposed Lean patch: the main interface change
+still needed is the separate BM.6 fresh-insertion pricing, not a redesign of
+the loop child-charge record.
