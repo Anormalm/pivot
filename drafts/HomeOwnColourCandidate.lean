@@ -58,15 +58,11 @@ theorem card_children_meeting_add_one_le_of_none_candidate
       (none : Option ι) ∉ C.image (fun Y => (some Y : Option ι)) := by
     simp
 
-  have hinjSome :
-      Set.InjOn (fun Y : ι => (some Y : Option ι)) (C : Set ι) := by
+  have hcardSome :
+      (C.image (fun Y => (some Y : Option ι))).card = C.card := by
+    rw [Finset.card_image_of_injOn]
     intro a _ b _ hab
     exact Option.some.inj hab
-
-  have hcardSome :
-      (C.image (fun Y => (some Y : Option ι))).card = C.card :=
-    Finset.card_image_iff.mpr
-      (fun a ha b hb hab => Option.some.inj hab)
 
   have hunionSub :
       insert (none : Option ι)
