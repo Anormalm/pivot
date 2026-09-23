@@ -265,3 +265,38 @@ total_marked + p <= mkOf + ownGroupsOf.
 ```
 
 This route avoids introducing a new per-group event log.
+
+
+## 7. Direct loop-level stress test
+
+The aggregate telescope above is also exercised directly by
+
+```bash
+python experiments/loop_telescope.py --trials 200000 --seed 20260923
+```
+
+The committed run checks, across multiple groups and ordered child returns,
+
+```text
+marked_i + emptied_i <= meetings_i
+final_nonempty + total_emptied == p
+final_nonempty == own_groups
+total_marked + p <= total_meetings + own_groups
+```
+
+on every trial.
+
+Result:
+
+```text
+trials:      200,000
+violations:  0
+```
+
+See `results/loop_telescope_summary.json`.
+
+This experiment is intentionally closer to the planned `LoopCost` proof
+than the single-group adversarial DP: it validates the telescoping bookkeeping
+that turns per-iteration emptying credit into the aggregate `+p`
+cancellation. It remains a falsification test rather than a substitute for
+the Lean proof.

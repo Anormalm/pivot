@@ -87,6 +87,41 @@ charge.
 
 No candidate-bound violation was observed.
 
+
+## Experiment 4: direct loop-telescope stress test
+
+Configuration:
+
+```json
+{
+  "seed": 20260923,
+  "requested_trials": 200000,
+  "completed_trials": 200000,
+  "violations": 0,
+  "mean_aggregate_slack": 23.318355,
+  "max_aggregate_slack": 102,
+  "tight_fraction": 0.014585,
+  "mean_marked_events": 11.79706,
+  "mean_child_group_meetings": 38.3359
+}
+```
+
+The test simulates multiple pivot groups across an ordered sequence of child
+returns and checks four structural properties directly:
+
+```text
+marked_i + emptied_i <= meetings_i
+final_nonempty + total_emptied == p
+final_nonempty == own_groups
+total_marked + p <= total_meetings + own_groups
+```
+
+No violation was observed in 200,000 sampled loop states.
+
+This is the aggregate inequality that the proposed Lean telescope needs
+before the existing home-colour and Cr/Be charging lemmas can cancel the
+once-per-group term.
+
 ## Interpretation
 
 The experiments support a narrow claim: the candidate full-call
