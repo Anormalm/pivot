@@ -1,0 +1,12 @@
+{
+  "max_n": 6,
+  "num_homes": 3,
+  "group_subsets_checked": 5699730,
+  "home_identity_checks": 5699730,
+  "violations": 0,
+  "checked_inequalities": [
+    "child_homes(P) + own_indicator(P) == distinct_homes(P)",
+    "distinct_homes(P) - 1 <= bichromatic_parent_edges(containing_piece)"
+  ],
+  "elapsed_seconds": 4.249322891235352
+}
