@@ -278,3 +278,51 @@ failure.
 
 Commit `102cfdd4` replaces the remaining tactic-sensitive arithmetic in that
 module with explicit monotonicity bounds and a compact coefficient identity.
+
+## 2026-09-24 BM.6 amortization correction
+
+The full candidate Lean suite is green at GitHub Actions run
+`36021686384` against the pinned upstream snapshot.  In particular the
+credit-aware recursive cost chain, refined aggregation, square-root
+parameter arithmetic, ownership lemmas and full-budget arithmetic all compile.
+
+However, a separate experiment that patches `DCost/initCost` exposed an
+important limitation of the proposed **second** tightening.
+
+The direct BM.6 insertion operation is O(1) per pivot on a fresh one-block
+DLazy structure, but the Layer-A telescope charges both raw work and change
+in the DLazy potential.  `BMTele.insMany_tele` therefore still pays the
+ordinary insertion charge
+
+```text
+bsCost + O(1) + 210 * ell(M, entries+1)
+```
+
+during initialization.
+
+When the fresh block has p >> M entries,
+
+```text
+ell(M,p) = Theta(log(p/M)),
+S_M(p)   = Theta(p log(p/M)).
+```
+
+On the C-HD level scales this logarithm can be Theta(t).  The current
+amortized proof therefore has a genuine O(t p) initialization contribution
+even though the physical insert instruction is constant-time.
+
+The experiment in `experiments/split_work_growth.py` also shows that this is
+not merely a strange potential: repeatedly preparing/exhausting one
+oversized block via balanced median splits has Theta(p log(p/M)) scan work.
+
+Consequently:
+
+- the N4 sharpening `g_j <= c_j` remains kernel-checked and unaffected;
+- removing the BM.6 O(t p) term is **not** established by the fresh-insert
+  lemma;
+- the conditional O(sqrt(m N log N)) / 11/12 -> 7/8 result requires an
+  additional algorithmic/amortization idea that avoids or globally bypasses
+  exact ordered processing of all initial pivots.
+
+See `notes/fresh_init_potential_blocker.md` and
+`notes/ordered_pull_barrier.md`.
