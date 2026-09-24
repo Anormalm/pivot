@@ -1,0 +1,73 @@
+name: CertPull experiment
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [loop-telescope]
+    paths:
+      - "drafts/CertPullSpecCandidate.lean"
+      - "drafts/CertPullCorrectnessCandidate.lean"
+      - "drafts/CertPullStepPostCandidate.lean"
+      - ".github/workflows/cert-pull.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cert-pull-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  cert-pull:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout pivot
+        uses: actions/checkout@v4
+
+      - name: Checkout pinned C-HD snapshot
+        uses: actions/checkout@v4
+        with:
+          repository: spicylemonade/c-hd-proof
+          ref: 98c53accb47a505482a1781597ae14bf67e81cec
+          path: upstream
+
+      - name: Install pinned Lean toolchain
+        uses: leanprover/lean-action@v1
+        with:
+          lake-package-directory: upstream/formal/lean
+          auto-config: false
+          build: false
+          test: false
+          lint: false
+          use-github-cache: false
+
+      - name: Fetch Mathlib cache
+        working-directory: upstream/formal/lean
+        run: lake exe cache get
+
+      - name: Build BM
+        working-directory: upstream/formal/lean
+        run: lake build Frontier.CHD.BM
+
+      - name: Prepare candidates
+        run: |
+          {
+            echo 'import Frontier.CHD.BM'
+            cat drafts/CertPullSpecCandidate.lean
+            cat drafts/CertPullCorrectnessCandidate.lean
+          } > upstream/formal/lean/CertPullPre.lean
+
+          {
+            echo 'import Frontier.CHD.BM'
+            cat drafts/CertPullSpecCandidate.lean
+            cat drafts/CertPullCorrectnessCandidate.lean
+            cat drafts/CertPullStepPostCandidate.lean
+          } > upstream/formal/lean/CertPullStep.lean
+
+      - name: Check precondition layer
+        working-directory: upstream/formal/lean
+        run: lake env lean CertPullPre.lean
+
+      - name: Check step_post layer
+        working-directory: upstream/formal/lean
+        run: lake env lean CertPullStep.lean
