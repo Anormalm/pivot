@@ -65,6 +65,10 @@ theorem callC_reccost_credit_case_candidate
       lg := by
   classical
 
+  -- Keep the original derivation available for the root-budget theorem;
+  -- destructuring a dependent CallC witness may clear the source hypothesis.
+  have hrelRoot := hrel
+
   -- Expose the actual loop tail so its recursive records can be handled by
   -- the already-compiled structural credit transport.
   obtain ⟨d1, p0, P0, Q0, W0, φ1, ω0, cfp, piv, σ, lgc0, J,
@@ -93,7 +97,7 @@ theorem callC_reccost_credit_case_candidate
 
   · obtain ⟨r, lgc, hlg, hrfull, hroot⟩ :=
       callC_full_root_credit_budget_candidate
-        hout hsort hsimp hk hsub hpre hI hlow hrel hfull
+        hout hsort hsimp hk hsub hpre hI hlow hrelRoot hfull
         hpull hdel hinsI hMτ hgMτ hinit
 
     rw [hlg] at hlg0
