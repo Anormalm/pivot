@@ -7,7 +7,7 @@ namespace BM
 open Frontier Graph
 
 theorem step_post_cert_candidate (hpre : CallPre B S d0) (hfp : FPContract B S d0 d1 p P0 Q W)
-    (h : LInv G s B S d0 d1 P0 B'0 σ) (hne : ¬ σ.D.IsEmpty) (hpull : CertPullSpec G s σ B S0 Bi D1)
+    (h : LInv G s B S d0 d1 P0 B'0 σ) (hne : ¬ σ.D.IsEmpty) (hpull : CertPullSpec (G := G) (s := s) σ B S0 Bi D1)
     {cap : ℕ} {B'i : WLab G s} {Ui : Finset (Fin G.n)} {Di : DS G s} {d1' : Labels G s}
     (hpost : CallPost G s Bi (expand σ S0 Bi) σ.d cap (B'i, Ui, Di, d1'))
     {L : List (Fin G.m)} (hL : Enumerates G L Ui) {piv' : Fin p → Fin G.n}
