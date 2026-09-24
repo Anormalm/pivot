@@ -200,6 +200,11 @@ jobs:
             cat drafts/FullBudgetArithmeticCandidate.lean
           } > upstream/formal/lean/CandidateFullBudgetArithmetic.lean
 
+          {
+            echo 'import Frontier.CHD.RecFPLog'
+            cat drafts/WPrimeOwnFormalCandidate.lean
+          } > upstream/formal/lean/CandidateWPrimeOwnFormal.lean
+
       - name: Check all candidate modules
         working-directory: upstream/formal/lean
         shell: bash
@@ -262,6 +267,9 @@ jobs:
           echo "::group::CandidateFullBudgetArithmetic"
           lake env lean CandidateFullBudgetArithmetic.lean || status=1
           echo "::endgroup::"
+          echo "::group::CandidateWPrimeOwnFormal"
+          lake env lean CandidateWPrimeOwnFormal.lean || status=1
+          echo "::endgroup::"
           exit "$status"
 
-# candidate set revision: 21
+# candidate set revision: 22
