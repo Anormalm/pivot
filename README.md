@@ -9,17 +9,19 @@ directed SSSP construction discussed by Vals in
 
 **Research hypothesis, not a proved improved SSSP theorem.**
 
-The upstream C-HD result remains unchanged. This repository isolates two
-places where its current cost accounting appears deliberately coarse:
+The upstream C-HD result remains unchanged. The strongest finding so far is
+a tightening of the full-call BM.23 accounting:
 
-1. full-call BM.23 pivot re-selections are charged using
-   `g_j <= 1 + c_j`; the executable semantics only re-select when the
-   residual group is nonempty, suggesting a `g_j <= c_j` refinement;
-2. BM.6 initial pivots are charged using the generic insertion cost even
-   though they are inserted into a fresh one-block data structure and
-   `Insert` does not split.
+1. C-HD charges pivot re-selections using `g_j <= 1 + c_j`; the executable
+   semantics only re-select when the residual group is nonempty, and the
+   candidate Lean chain supports the sharper `g_j <= c_j` accounting.
+2. BM.6 raw insertion into a fresh one-block DLazy structure is O(1) per
+   pivot, but the current DLazy **amortized potential** can increase by
+   Theta(t) per pivot. Therefore BM.6 still carries a Theta(t p)-scale
+   deferred-work term in the existing end-to-end proof.
 
-If both refinements are proved in the C-HD cost model, the parameter balance
+If the BM.6 amortized preload term can also be removed or bypassed, the
+parameter balance
 changes from
 
 ```text
@@ -58,6 +60,7 @@ See [`notes/lean_patch_plan.md`](notes/lean_patch_plan.md) for the file-by-file 
 See [`notes/new_parameter_route.md`](notes/new_parameter_route.md) for the square-root parameter retuning argument.
 See [`notes/prior_work.md`](notes/prior_work.md) for the dated prior-work audit.
 See [`notes/proof_status.md`](notes/proof_status.md) for a strict separation between kernel-checked local accounting results and the remaining integration obligations.
+See [`notes/fresh_init_amortization_blocker.md`](notes/fresh_init_amortization_blocker.md) for the current main obstacle to the square-root retuning.
 
 The main candidate Lean modules are checked in GitHub Actions against the pinned upstream C-HD snapshot. The current checked chain includes:
 - exact marked/emptied finite-set accounting;
@@ -71,7 +74,10 @@ The main candidate Lean modules are checked in GitHub Actions against the pinned
 
 The latest green candidate workflow is run `35956298994`. All 12 modules in that chain are `sorry`-free and `admit`-free.
 
-The remaining work is integration into the recursive cost-log/master-cost stack and the new parameter layer, not shortest-path correctness.
+The N4-side local accounting is kernel-checked. The main asymptotic blocker is
+now BM.6: cheap raw insertion still creates Theta(t p)-scale DLazy potential
+in the worst regime, so the square-root master bound is not obtained by
+accounting cleanup alone.
 
 ## Why the `+1` looks removable
 
@@ -304,11 +310,17 @@ BM.23 semantics makes that exception unnecessary for full calls.
 
 ## Next proof target
 
-The local full-call cancellation is now represented by kernel-checked candidate lemmas. The next targets are integration:
+The N4-side full-call cancellation is represented by kernel-checked candidate
+lemmas. The next research target is no longer just cost-interface plumbing:
 
-1. carry the full-call `I * p` credit through the recursive `CostLog` theorem rather than dropping it at the record boundary;
-2. integrate the already-compiled fresh one-block BM.6 insertion lemma into the `DCost/initCost` interface so initialization is priced separately from evolved inserts;
-3. replace the old `CostAggregate.Valid.cost_le` / master algebra with the refined budget that has no unconditional expensive `t * p` term;
-4. only then retune to constant `k` and `t = Theta(sqrt(N log N / m))`.
+1. keep integrating the N4 credit through `CostLog/CostLe` so the local
+   improvement is formally reusable;
+2. resolve the BM.6 preload potential identified in
+   `notes/fresh_init_amortization_blocker.md`;
+3. investigate a bulk initialization / alternative priority structure, or a
+   second FindPivots improvement that permits larger `k`;
+4. only after that revisit the constant-`k`,
+   `t = Theta(sqrt(N log N / m))` retuning.
 
-The improved SSSP bound remains conditional until that integration and the final parameter proof are complete.
+The `O(sqrt(m N log N))` expression is a conditional target, not a theorem
+supported by the current DLazy amortized analysis.
