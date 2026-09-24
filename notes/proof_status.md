@@ -27,17 +27,22 @@ max reselections = #represented homes - 1.
 This is an elementary case analysis and is independently checked by
 `experiments/exact_characterization.py` on 585,978 states.
 
-### 2. Fresh BM.6 insertion is linear in the number of pivots
+### 2. Fresh BM.6 has O(p) raw cost, but not O(p) amortized cost
 
-The upstream DLazy source already proves that:
+The upstream DLazy source proves that:
 
 - `newC` creates a one-block structure;
 - `Insert` does not split blocks;
-- the list insertion cost is bounded by
-  `length * (log2(#blocks) + 4)`.
+- the raw list-insertion cost is O(p).
 
-Therefore BM.6 insertion into the fresh structure is `O(p)`, not
-`O(t p)`. See `notes/fresh_insert_audit.md`.
+However, the end-to-end proof uses `BMTele.insMany_tele`, which charges raw
+cost **plus the increase in the DLazy potential**. A fresh unsplit block with
+`p/M = 2^t` creates Theta(t p) potential under the existing `potM`
+definition. This is reproduced by `experiments/fresh_init_potential.py`.
+
+So the raw-cost observation is correct, but it does not by itself remove the
+master-level `t p` term. See
+`notes/fresh_init_amortization_blocker.md`.
 
 ### 3. Loop telescope holds in the abstract home model
 
@@ -167,28 +172,23 @@ that preserves the full-call `I * p` credit all the way to `CostLe`.
 
 This is now primarily proof plumbing rather than a missing combinatorial idea.
 
-### P2. BM.6 fresh-insertion interface integration
+### P2. BM.6 amortized preload potential
 
-The concrete fresh insertion lemma is compiled:
+The concrete fresh insertion lemma compiles and proves O(p) **raw** work.
 
-```text
-fresh one-block BM.6 insertion = O(p)
-```
+The `DCost.initIns` experiment was then threaded successfully through
+`BMCost`, `LoopCost`, `CostLog`, `CostLe`, and the `MasterCost`
+instantiation, but the full build fails in `BMTeleLoop`. That failure is
+substantive: `callD_tele` must also pay the potential created by the fresh
+pivot block.
 
-but upstream `BMCost.initCost` still definitionally uses the ordinary
-evolved-structure field `DC.ins`.
+Under the current DLazy potential, a fresh block with `p/M = 2^t` has
+Theta(t p) potential. Therefore simply adding a constant `initIns` field is
+not a valid end-to-end repair.
 
-The attempted `DCost.initIns` interface experiment correctly exposed the
-patch radius:
-
-- named `DCost` constructors;
-- four positional zero-cost constructors;
-- `callC_cost`;
-- `budOf / callC_reccost / bmsspC_reccost`;
-- ultimately the master instantiation.
-
-The first experiment failed because those downstream constructors/theorems had
-not yet been updated, not because the fresh-insertion lemma failed.
+The remaining options are a sharper global potential cancellation, a
+bulk-initialization / alternative priority structure, or another algorithmic
+improvement that makes `t p` lower-order.
 
 ### P3. Refined global `CostLe` theorem
 
@@ -243,7 +243,9 @@ At the current checkpoint it is accurate to say:
 - the proposed N4 tightening is supported by a direct paper-level argument;
 - the local full-call accounting/cancellation lemmas are kernel-checked against
   the pinned C-HD snapshot;
-- the fresh BM.6 one-block insertion bound is kernel-checked;
+- the fresh BM.6 one-block **raw** insertion bound is kernel-checked;
+- the existing DLazy amortized potential still creates a Theta(t p)-scale
+  initialization obligation in the worst regime;
 - the final improved SSSP complexity theorem is **not** yet proved.
 
 The repository should still avoid claiming a completed
