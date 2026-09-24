@@ -36,8 +36,7 @@ theorem childSum_pinned_eq_chgOf_candidate
   unfold childCharge chgOf groupsOf
   rw [hω]
   congr 2
-  obtain ⟨hp, hP⟩ := hpin
-  subst hp
+  obtain ⟨rfl, hP⟩ := hpin
   have hPj : ∀ j, (P j ∩ x.2.U).Nonempty ↔
       ((((forestGroups r.S r.Q k ω.trees).get j).toFinset ∩ x.2.U).Nonempty) := by
     intro j
@@ -67,8 +66,7 @@ theorem terminalOwnGroups_eq_ownGroupsCredit_candidate
   classical
   unfold terminalOwnGroups ownGroupsCredit groupsOf
   rw [hω]
-  obtain ⟨hp, hP⟩ := hpin
-  subst hp
+  obtain ⟨rfl, hP⟩ := hpin
   rw [← card_filter_get
     (forestGroups r.S r.Q k ω.trees)
     (fun g => (g.toFinset ∩ r.W').Nonempty)]
