@@ -173,6 +173,22 @@ jobs:
             cat drafts/SqrtParameterCandidate.lean
           } > upstream/formal/lean/CandidateSqrtParameters.lean
 
+          {
+            echo 'import Frontier.CHD.CostLog'
+            cat drafts/LoopCostFiniteCandidates.lean
+            cat drafts/IterCostRefinedCandidate.lean
+            cat drafts/LoopCostInsertCreditCandidate.lean
+            cat drafts/FinalResidualCandidate.lean
+            cat drafts/FullTerminalCreditCandidate.lean
+            cat drafts/CallCostFullCreditCandidate.lean
+            cat drafts/RecCostCreditCandidate.lean
+            cat drafts/LoopRecCostCreditCandidate.lean
+            cat drafts/RecordCreditBridgeCandidate.lean
+            cat drafts/RootCreditBudgetCandidate.lean
+            cat drafts/CallRecCostCreditCaseCandidate.lean
+            cat drafts/BMSSPRecCostCreditCaseCandidate.lean
+          } > upstream/formal/lean/CandidateBMSSPRecCostCreditCase.lean
+
       - name: Check all candidate modules
         working-directory: upstream/formal/lean
         shell: bash
@@ -226,6 +242,9 @@ jobs:
           echo "::group::CandidateSqrtParameters"
           lake env lean CandidateSqrtParameters.lean || status=1
           echo "::endgroup::"
+          echo "::group::CandidateBMSSPRecCostCreditCase"
+          lake env lean CandidateBMSSPRecCostCreditCase.lean || status=1
+          echo "::endgroup::"
           exit "$status"
 
-# candidate set revision: 18
+# candidate set revision: 19
