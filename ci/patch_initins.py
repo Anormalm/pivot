@@ -244,3 +244,28 @@ replace(
 )
 
 print("patched stage-3 CostLe fresh-init propagation")
+
+
+# 7. Instantiate the separated fresh insertion cost in MasterCost.
+replace(
+    "Frontier/CHD/MasterCost.lean",
+    """    (I := 211 * Nat.log 2 (8 * chdRho (tF n m) δ (LF n m) + 8) + 441) (nw := 3)
+    (fun _ _ => le_rfl) (fun _ _ => le_rfl) (fun l => chdIns_le (by omega) l) (fun _ => le_rfl) hMτ hgMτ""",
+    """    (I := 211 * Nat.log 2 (8 * chdRho (tF n m) δ (LF n m) + 8) + 441) (I0 := 4) (nw := 3)
+    (fun _ _ => le_rfl) (fun _ _ => le_rfl) (fun l => chdIns_le (by omega) l)
+    (fun _ => le_rfl) (fun _ => le_rfl) hMτ hgMτ"""
+)
+
+replace(
+    "Frontier/CHD/MasterCost.lean",
+    """    (I := 211 * Nat.log 2 (8 * chdRho (tF n m) δ (LF n m) + 8) + 441) (ad := 5) (bd := 1) (nw := 3)
+    (a := a) (cI := 3826) (cn := 1) (c9 := 952) (t := tF n m)
+    (c := cValid a) hRC hRA hS hτ ha (mc_kk n m) h3k (mc_ins_le n m δ hδ hdd) (by omega) le_rfl""",
+    """    (I := 211 * Nat.log 2 (8 * chdRho (tF n m) δ (LF n m) + 8) + 441) (I0 := 4)
+    (ad := 5) (bd := 1) (nw := 3)
+    (a := a) (cI := 3826) (cn := 1) (c9 := 952) (t := tF n m)
+    (c := cValid a) hRC hRA hS hτ ha (mc_kk n m) h3k (mc_ins_le n m δ hδ hdd)
+    (by have ht := sixteen_le_tF n m; nlinarith) (by omega) le_rfl"""
+)
+
+print("patched stage-4 MasterCost fresh-init instantiation")
