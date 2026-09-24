@@ -166,3 +166,81 @@ replace(
 )
 
 print("patched stage-2 CostLog fresh-init propagation")
+
+
+# 6. Preserve the existing coarse CostLe theorem with a separate fresh
+#    insertion coefficient.  The old target still contains t*p; this stage
+#    only makes the interface coherent before the refined CostLe is added.
+replace(
+    "Frontier/CHD/CostLe.lean",
+    """theorem budget_arith {Del A tv k Q S nw p I cs J cm W W' Wr ad bd U Fo t Cr Be mk nch C0 C1 C2 a cI cn c9 pS : ℕ}""",
+    """theorem budget_arith {Del A tv k Q S nw p I I0 cs J cm W W' Wr ad bd U Fo t Cr Be mk nch C0 C1 C2 a cI cn c9 pS : ℕ}"""
+)
+
+replace(
+    "Frontier/CHD/CostLe.lean",
+    """    (hI : I ≤ cI * t) (hnw : nw ≤ cn * t) (hC2 : C2 ≤ 6 * k + 1 + I) :""",
+    """    (hI : I ≤ cI * t) (hI0 : I0 ≤ cI * t)
+    (hnw : nw ≤ cn * t) (hC2 : C2 ≤ 6 * k + 1 + I) :"""
+)
+
+replace(
+    "Frontier/CHD/CostLe.lean",
+    """    scanC * Del + A * (tv + k * Q) + 3 * S + (nw + S + p * (2 + I)) +""",
+    """    scanC * Del + A * (tv + k * Q) + 3 * S + (nw + S + p * (2 + I0)) +"""
+)
+
+replace(
+    "Frontier/CHD/CostLe.lean",
+    """  have eI : ∀ x, t * x ≤ R → x * I ≤ cI * R := fun x hx => by
+    calc x * I ≤ x * (cI * t) := Nat.mul_le_mul_left _ hI
+      _ = cI * (t * x) := by ring
+      _ ≤ cI * R := Nat.mul_le_mul_left _ hx""",
+    """  have eI : ∀ x, t * x ≤ R → x * I ≤ cI * R := fun x hx => by
+    calc x * I ≤ x * (cI * t) := Nat.mul_le_mul_left _ hI
+      _ = cI * (t * x) := by ring
+      _ ≤ cI * R := Nat.mul_le_mul_left _ hx
+  have eI0 : ∀ x, t * x ≤ R → x * I0 ≤ cI * R := fun x hx => by
+    calc x * I0 ≤ x * (cI * t) := Nat.mul_le_mul_left _ hI0
+      _ = cI * (t * x) := by ring
+      _ ≤ cI * R := Nat.mul_le_mul_left _ hx"""
+)
+
+replace(
+    "Frontier/CHD/CostLe.lean",
+    """  have epI : p * (2 + I) ≤ 2 * R + cI * R := by
+    have := eI p rtp
+    have : p * (2 + I) = 2 * p + p * I := by ring""",
+    """  have epI : p * (2 + I0) ≤ 2 * R + cI * R := by
+    have := eI0 p rtp
+    have : p * (2 + I0) = 2 * p + p * I0 := by ring"""
+)
+
+replace(
+    "Frontier/CHD/CostLe.lean",
+    """    (hk : 2 ≤ k) {C0 C1 I ad bd nw a cI cn c9 t c : ℕ}
+    (hRC : RecCost (chgOf k C0 C1 (2 * (3 * k) + 1 + I)) (budOf k hins hext ad bd I nw) lg)""",
+    """    (hk : 2 ≤ k) {C0 C1 I I0 ad bd nw a cI cn c9 t c : ℕ}
+    (hRC : RecCost (chgOf k C0 C1 (2 * (3 * k) + 1 + I)) (budOf k hins hext ad bd I I0 nw) lg)"""
+)
+
+replace(
+    "Frontier/CHD/CostLe.lean",
+    """    (hI : I ≤ cI * t) (hnw : nw ≤ cn * t) (hC0 : C0 ≤ c9)""",
+    """    (hI : I ≤ cI * t) (hI0 : I0 ≤ cI * t)
+    (hnw : nw ≤ cn * t) (hC0 : C0 ≤ c9)"""
+)
+
+replace(
+    "Frontier/CHD/CostLe.lean",
+    """    (S := r.S.card) (nw := nw) (p := r.p) (I := I) (J := r.J.card)""",
+    """    (S := r.S.card) (nw := nw) (p := r.p) (I := I) (I0 := I0) (J := r.J.card)"""
+)
+
+replace(
+    "Frontier/CHD/CostLe.lean",
+    """    htv hA hW hW' hcs hmk hnch hS1 hpQ hkk h3k (by omega) hI hnw (by omega)""",
+    """    htv hA hW hW' hcs hmk hnch hS1 hpQ hkk h3k (by omega) hI hI0 hnw (by omega)"""
+)
+
+print("patched stage-3 CostLe fresh-init propagation")
