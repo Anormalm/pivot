@@ -37,10 +37,15 @@ theorem childSum_pinned_eq_chgOf_candidate
   rw [hω]
   congr 2
   obtain ⟨rfl, hP⟩ := hpin
+  have hPjEq :
+      ∀ j, P j =
+        ((forestGroups r.S r.Q k ω.trees).get j).toFinset := by
+    intro j
+    simpa using hP j
   have hPj : ∀ j, (P j ∩ x.2.U).Nonempty ↔
       ((((forestGroups r.S r.Q k ω.trees).get j).toFinset ∩ x.2.U).Nonempty) := by
     intro j
-    rw [hP j]
+    rw [hPjEq j]
   rw [← card_filter_get
     (forestGroups r.S r.Q k ω.trees)
     (fun g => (g.toFinset ∩ x.2.U).Nonempty)]
@@ -71,9 +76,14 @@ theorem terminalOwnGroups_eq_ownGroupsCredit_candidate
     (forestGroups r.S r.Q k ω.trees)
     (fun g => (g.toFinset ∩ r.W').Nonempty)]
   congr 1
+  have hPjEq :
+      ∀ j, P j =
+        ((forestGroups r.S r.Q k ω.trees).get j).toFinset := by
+    intro j
+    simpa using hP j
   ext j
   simp only [Finset.mem_filter, Finset.mem_univ, true_and]
-  rw [hP j, hW]
+  rw [hPjEq j, hW]
 
 end BM
 end CHD
