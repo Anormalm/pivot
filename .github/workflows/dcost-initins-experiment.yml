@@ -41,7 +41,7 @@ jobs:
       - name: Apply initIns patch
         run: python ci/patch_initins.py
 
-      - name: Build patched stage-3 coarse CostLe
+      - name: Build patched stage-4 MasterCost
         working-directory: upstream/formal/lean
         run: |
-          lake build Frontier.CHD.BMCost Frontier.CHD.LoopCost Frontier.CHD.CostLog Frontier.CHD.CostLe
+          lake build Frontier.CHD.BMCost Frontier.CHD.LoopCost Frontier.CHD.CostLog Frontier.CHD.CostLe Frontier.CHD.MasterCost
