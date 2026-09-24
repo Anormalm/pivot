@@ -59,7 +59,7 @@ theorem PullSpec.toCertPullSpec
     {Bd : WLab G s} {S0 : Finset (Fin G.n)}
     {Bi : WLab G s} {D1 : DS G s}
     (h : PullSpec σ.D Bd S0 Bi D1) :
-    CertPullSpec G s σ Bd S0 Bi D1 where
+    CertPullSpec (G := G) (s := s) σ Bd S0 Bi D1 where
   selected := by
     intro y hy
     exact (h.pulled y).mp hy
