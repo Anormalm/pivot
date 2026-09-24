@@ -39,9 +39,13 @@ theorem lgN_succ_le_Lsqrt_mul_candidate
     lgN n + 1 ≤ LsqrtCandidate n t * t := by
   unfold LsqrtCandidate
   have e1 := Nat.div_add_mod (lgN n) t
-  have e2 := Nat.mod_lt (lgN n) t (by omega)
-  rw [Nat.add_mul, one_mul]
-  nlinarith
+  have e2 := Nat.mod_lt (lgN n) (show 0 < t by omega)
+  have he :
+      (lgN n / t + 1) * t =
+        t * (lgN n / t) + t := by
+    ring
+  rw [he]
+  omega
 
 /-- The top workload cap remains above 2n with the candidate depth for any
 t >= 16. -/
@@ -80,7 +84,6 @@ theorem lgN_le_t8_candidate
     lgN n ≤ 16 * t ^ 8 := by
   set f := Frontier.GateCCalc.F n with hf
   set A := lgN n with hA
-  set d := dd n m with hd
 
   have hlog : Nat.log 2 n ≤ A := by
     rw [hA]
@@ -88,26 +91,31 @@ theorem lgN_le_t8_candidate
 
   have hf4 : f ^ 4 ≤ A ^ 3 := by
     rw [hf]
-    exact le_trans (Frontier.GateCCalc.F_pow_four_le n)
+    exact le_trans (F_pow_four_le n)
       (Nat.pow_le_pow_left hlog 3)
 
   have hAd : A ≤ t ^ 2 * (f + 1) := by
-    rw [hA, ← hd, ← hf]
-    exact hspec.trans (Nat.mul_le_mul_left _ hdd)
+    calc
+      A = lgN n := hA
+      _ ≤ t ^ 2 * dd n m := hspec
+      _ ≤ t ^ 2 * (Frontier.GateCCalc.F n + 1) :=
+        Nat.mul_le_mul_left _ hdd
+      _ = t ^ 2 * (f + 1) := by rw [hf]
 
   by_cases hf0 : f = 0
-  · subst f
-    have hA_le : A ≤ t ^ 2 := by
+  · have hA_le : A ≤ t ^ 2 := by
+      rw [hf0] at hAd
       simpa using hAd
     have ht2_le : t ^ 2 ≤ 16 * t ^ 8 := by
       have ht6 : 1 ≤ t ^ 6 := Nat.one_le_pow _ _ ht
       calc
         t ^ 2 = 1 * t ^ 2 := by ring
         _ ≤ (16 * t ^ 6) * t ^ 2 := by
-          exact Nat.mul_le_mul_right _ (by omega)
+          exact Nat.mul_le_mul_right _
+            (le_trans ht6 (by omega))
         _ = 16 * t ^ 8 := by ring
     exact hA_le.trans ht2_le
-  · have hfpos : 1 ≤ f := by omega
+  · have hfpos : 0 < f := Nat.pos_of_ne_zero hf0
     have hf1 : f + 1 ≤ 2 * f := by omega
     have hA2 : A ≤ 2 * t ^ 2 * f := by
       calc
@@ -129,16 +137,19 @@ theorem lgN_le_t8_candidate
     have hf3pos : 0 < f ^ 3 := by positivity
     have hfactor :
         f * f ^ 3 ≤ (8 * t ^ 6) * f ^ 3 := by
-      simpa [pow_succ] using hfbound
-    have hf_le : f ≤ 8 * t ^ 6 := by
-      exact Nat.le_of_mul_le_mul_right hfactor hf3pos
+      calc
+        f * f ^ 3 = f ^ 4 := by ring
+        _ ≤ 8 * t ^ 6 * f ^ 3 := hfbound
+    have hf_le : f ≤ 8 * t ^ 6 :=
+      Nat.le_of_mul_le_mul_right hfactor hf3pos
 
     have hfp1 : f + 1 ≤ 9 * t ^ 6 := by
       have ht6 : 1 ≤ t ^ 6 := Nat.one_le_pow _ _ ht
       omega
 
     calc
-      A ≤ t ^ 2 * (f + 1) := hAd
+      lgN n = A := hA.symm
+      _ ≤ t ^ 2 * (f + 1) := hAd
       _ ≤ t ^ 2 * (9 * t ^ 6) :=
         Nat.mul_le_mul_left _ hfp1
       _ = 9 * t ^ 8 := by ring
