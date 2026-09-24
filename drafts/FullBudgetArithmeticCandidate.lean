@@ -158,7 +158,7 @@ theorem budget_arith_full_credit_candidate
         (6 * k + 1 + I) * mk
           = (6 * k + 1) * mk + I * mk := by ring
     rw [he] at hcs
-    exact hcs
+    simpa [Nat.add_assoc] using hcs
 
   -- Move all non-marking terms into a base, then use the already-checked
   -- credit cancellation on the marking terms.
@@ -178,7 +178,15 @@ theorem budget_arith_full_credit_candidate
       cost + I * p ≤
         base + (6 * k + 1) * mk + I * mk + I * own := by
     rw [hbase]
-    omega
+    exact le_trans hcost (by
+      apply Nat.add_le_add_left
+      apply Nat.add_le_add_right
+      apply Nat.add_le_add_right
+      apply Nat.add_le_add_right
+      apply Nat.add_le_add_right
+      apply Nat.add_le_add_right
+      apply Nat.add_le_add_right
+      omega)
 
   have hcancel :=
     full_credit_cancel_candidate
@@ -191,20 +199,22 @@ theorem budget_arith_full_credit_candidate
   have hcheapP :
       (6 * k + 1) * p ≤ 7 * R := by
     have hc : 6 * k + 1 ≤ 7 * k := by
-      nlinarith
+      omega
     calc
-      (6 * k + 1) * p ≤ 7 * (k * p) := by
-        nlinarith
+      (6 * k + 1) * p ≤ (7 * k) * p :=
+        Nat.mul_le_mul_right _ hc
+      _ = 7 * (k * p) := by ring
       _ ≤ 7 * R := Nat.mul_le_mul_left _ rkp
 
   have hcheapCB :
       (6 * k + 1) * (Cr + Be) ≤ 7 * R := by
     have hc : 6 * k + 1 ≤ 7 * k := by
-      nlinarith
+      omega
     calc
       (6 * k + 1) * (Cr + Be)
-        ≤ 7 * (k * (Cr + Be)) := by
-          nlinarith
+        ≤ (7 * k) * (Cr + Be) :=
+          Nat.mul_le_mul_right _ hc
+      _ = 7 * (k * (Cr + Be)) := by ring
       _ ≤ 7 * (t * (Cr + Be)) := by
           exact Nat.mul_le_mul_left 7
             (Nat.mul_le_mul_right _ hkt)
@@ -212,8 +222,12 @@ theorem budget_arith_full_credit_candidate
 
   have hcheap :
       (6 * k + 1) * (p + Cr + Be) ≤ 14 * R := by
-    rw [Nat.mul_add]
-    omega
+    have hs :
+        (6 * k + 1) * (p + Cr + Be)
+          = (6 * k + 1) * p + (6 * k + 1) * (Cr + Be) := by
+      ring
+    rw [hs]
+    exact Nat.add_le_add hcheapP hcheapCB
 
   have hICB : I * (Cr + Be) ≤ cI * R := by
     calc
