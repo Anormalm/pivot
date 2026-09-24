@@ -251,3 +251,30 @@ At the current checkpoint it is accurate to say:
 The repository should still avoid claiming a completed
 `O(sqrt(m N log N))` directed SSSP theorem until the recursive cost-log,
 fresh-init interface, global CostLe, and parameter/master layers are integrated.
+
+## 2026-09-24 late checkpoint
+
+The latest fully completed candidate CI run before the current arithmetic cleanup
+had exactly one failing module:
+
+```text
+CandidateFullBudgetArithmetic
+```
+
+All other candidate modules in the workflow passed, including:
+
+- recursive/all-level cost-credit transport;
+- record bridges and root credit budgets;
+- `BMSSPRecCostCreditCase`;
+- square-root parameter arithmetic;
+- refined global aggregation;
+- W-prime ownership provenance.
+
+This materially narrows the remaining candidate-layer proof work: the current
+red path is the final natural-number envelope converting the already-proved
+credit-aware full-call budget into the coarse asymptotic menu. The graph
+combinatorics and recursive credit plumbing are no longer the active CI
+failure.
+
+Commit `102cfdd4` replaces the remaining tactic-sensitive arithmetic in that
+module with explicit monotonicity bounds and a compact coefficient identity.
