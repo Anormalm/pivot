@@ -179,7 +179,10 @@ theorem budget_arith_full_credit_candidate
       1 + cs + (1 + I) * J + I * own ≤
         1 + C0 * nch + C1 * U + (1 + I) * J
           + (6 * k + 1) * mk + I * mk + I * own := by
-    omega
+    have h1 := Nat.add_le_add_left hcs' 1
+    have h2 := Nat.add_le_add_right h1 ((1 + I) * J)
+    have h3 := Nat.add_le_add_right h2 (I * own)
+    simpa [Nat.add_assoc, Nat.add_left_comm, Nat.add_comm] using h3
 
   set pre :=
       scanC * Del
@@ -266,7 +269,10 @@ theorem budget_arith_full_credit_candidate
           = (6 * k + 1) * p + (6 * k + 1) * (Cr + Be) := by
       ring
     rw [hs]
-    exact Nat.add_le_add hcheapP hcheapCB
+    calc
+      (6 * k + 1) * p + (6 * k + 1) * (Cr + Be)
+          ≤ 7 * R + 7 * R := Nat.add_le_add hcheapP hcheapCB
+      _ = 14 * R := by ring
 
   have hICB : I * (Cr + Be) ≤ cI * R := by
     calc
