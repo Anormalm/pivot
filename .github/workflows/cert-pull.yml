@@ -8,6 +8,7 @@ on:
       - "drafts/CertPullSpecCandidate.lean"
       - "drafts/CertPullCorrectnessCandidate.lean"
       - "drafts/CertPullStepPostCandidate.lean"
+      - "drafts/CertPullBMSSPCorrectnessCandidate.lean"
       - ".github/workflows/cert-pull.yml"
 
 permissions:
@@ -64,6 +65,14 @@ jobs:
             cat drafts/CertPullStepPostCandidate.lean
           } > upstream/formal/lean/CertPullStep.lean
 
+          {
+            echo 'import Frontier.CHD.BM'
+            cat drafts/CertPullSpecCandidate.lean
+            cat drafts/CertPullCorrectnessCandidate.lean
+            cat drafts/CertPullStepPostCandidate.lean
+            cat drafts/CertPullBMSSPCorrectnessCandidate.lean
+          } > upstream/formal/lean/CertPullFull.lean
+
       - name: Check precondition layer
         working-directory: upstream/formal/lean
         run: lake env lean CertPullPre.lean
@@ -71,3 +80,7 @@ jobs:
       - name: Check step_post layer
         working-directory: upstream/formal/lean
         run: lake env lean CertPullStep.lean
+
+      - name: Check all-level correctness
+        working-directory: upstream/formal/lean
+        run: lake env lean CertPullFull.lean
