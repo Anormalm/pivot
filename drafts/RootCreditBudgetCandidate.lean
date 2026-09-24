@@ -219,7 +219,6 @@ theorem callC_partial_root_credit_budget_candidate
   refine ⟨r, lgc, hlg, hrpart, ?_⟩
   unfold fullPivotCredit budCreditCaseCandidate
   rw [if_neg hrpart, if_neg hrpart]
-  simp only [Nat.zero_add]
   unfold budOf
   rw [htv, hdl, hp, ← hchg]
   exact le_trans hcost (by
