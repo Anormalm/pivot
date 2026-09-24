@@ -6,6 +6,13 @@ namespace BM
 
 open Frontier Graph
 
+variable {G : Graph} {s : Fin G.n}
+variable {B : WLab G s} {S : Finset (Fin G.n)}
+variable {d0 d1 : Labels G s} {p : ℕ}
+variable {P0 : Fin p → Finset (Fin G.n)} {Q W : Finset (Fin G.n)}
+variable {B'0 : WLab G s} {σ : LState G s p}
+variable {S0 : Finset (Fin G.n)} {Bi : WLab G s} {D1 : DS G s}
+
 theorem step_post_cert_candidate (hpre : CallPre B S d0) (hfp : FPContract B S d0 d1 p P0 Q W)
     (h : LInv G s B S d0 d1 P0 B'0 σ) (hne : ¬ σ.D.IsEmpty) (hpull : CertPullSpec (G := G) (s := s) σ B S0 Bi D1)
     {cap : ℕ} {B'i : WLab G s} {Ui : Finset (Fin G.n)} {Di : DS G s} {d1' : Labels G s}
