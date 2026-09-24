@@ -205,6 +205,13 @@ jobs:
             cat drafts/WPrimeOwnFormalCandidate.lean
           } > upstream/formal/lean/CandidateWPrimeOwnFormal.lean
 
+          {
+            echo 'import Frontier.CHD.BM'
+            cat drafts/CertPullSpecCandidate.lean
+            cat drafts/CertPullCorrectnessCandidate.lean
+          } > upstream/formal/lean/CandidateCertPullCorrectness.lean
+
+
       - name: Check all candidate modules
         working-directory: upstream/formal/lean
         shell: bash
@@ -270,6 +277,9 @@ jobs:
           echo "::group::CandidateWPrimeOwnFormal"
           lake env lean CandidateWPrimeOwnFormal.lean || status=1
           echo "::endgroup::"
+          echo "::group::CandidateCertPullCorrectness"
+          lake env lean CandidateCertPullCorrectness.lean || status=1
+          echo "::endgroup::"
           exit "$status"
 
-# candidate set revision: 23
+# candidate set revision: 24
