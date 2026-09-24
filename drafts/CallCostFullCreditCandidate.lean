@@ -52,8 +52,11 @@ theorem callC_cost_full_credit_given_init_candidate
       (P : Fin p → Finset (Fin G.n))
       (W' : Finset (Fin G.n)),
       lg = ([], r) :: lgc ∧
-      r.fp = some ω ∧ r.p = p ∧ r.B' = r.B ∧
+      r.fp = some ω ∧ r.p = p ∧ r.B' = r.B ∧ r.W' = W' ∧
       (∀ j, P j ⊆ r.S) ∧
+      (∃ hp : p = (forestGroups r.S r.Q k ω.trees).length,
+        ∀ j, P j =
+          ((forestGroups r.S r.Q k ω.trees).get (Fin.cast hp j)).toFinset) ∧
       r.cost + I * p ≤
         scanC * (ω.Dout \ ω.Din).card
           + fpA k hins hext *
@@ -133,10 +136,11 @@ theorem callC_cost_full_credit_given_init_candidate
     rw [hLlen]
     exact Nat.mul_le_mul_left _ (by omega)
   have hsumP' : ∑ j, (P j).card ≤ S.card := hsumP
+  have hpin := hfprel.2.2.1
   subst lg
   rw [hres] at hfull
-  refine ⟨_, lgc, ω, p, P, W', rfl, rfl, rfl, ?_,
-    fun j => (hfp.groups j).2, ?_⟩
+  refine ⟨_, lgc, ω, p, P, W', rfl, rfl, rfl, ?_, rfl,
+    fun j => (hfp.groups j).2, hpin, ?_⟩
   · exact hfull'
   · simp only
     unfold finCost
