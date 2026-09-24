@@ -178,15 +178,7 @@ theorem budget_arith_full_credit_candidate
       cost + I * p ≤
         base + (6 * k + 1) * mk + I * mk + I * own := by
     rw [hbase]
-    exact le_trans hcost (by
-      apply Nat.add_le_add_left
-      apply Nat.add_le_add_right
-      apply Nat.add_le_add_right
-      apply Nat.add_le_add_right
-      apply Nat.add_le_add_right
-      apply Nat.add_le_add_right
-      apply Nat.add_le_add_right
-      omega)
+    omega
 
   have hcancel :=
     full_credit_cancel_candidate
