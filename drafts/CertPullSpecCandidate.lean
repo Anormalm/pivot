@@ -67,8 +67,8 @@ theorem PullSpec.toCertPullSpec
     intro y _ hkey hlt
     exact (h.pulled y).mpr ⟨_, hkey, hlt⟩
   coverPivot := by
-    intro j y k _ _ hk _ hlt
-    exact (h.pulled _).mpr ⟨k, hk, hlt⟩
+    intro j y k _ _ hk hkle hlt
+    exact (h.pulled _).mpr ⟨k, hk, lt_of_le_of_lt hkle hlt⟩
   rest := h.rest
   bound := h.bound
   nonempty := h.nonempty
