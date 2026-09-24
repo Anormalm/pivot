@@ -1,0 +1,15 @@
+{
+  "M": 1024,
+  "max_t": 16,
+  "last_row": {
+    "t": 16,
+    "p_over_M": 65536,
+    "M": 1024,
+    "p": 67108864,
+    "Ssum_per_pivot": 14.000030755996704,
+    "potential_increase": 225486572832,
+    "potential_increase_per_pivot": 3360.0117688179016,
+    "potential_per_pivot_over_t": 210.00073555111885
+  },
+  "interpretation": "For p/M=2^t, the existing DLazy potential increase per pivot grows linearly in t. Raw fresh insertion is O(1), but the current amortized accounting creates Theta(t*p) potential."
+}
