@@ -25,7 +25,8 @@ theorem step_post_cert_candidate (hpre : CallPre B S d0) (hfp : FPContract B S d
         B' := B'i } := by
   set Si := expand σ S0 Bi with hSi
   set st0 : Labels G s × DS G s := (d1', (D1.merge Di).deleteSet Ui) with hst0
-  set st2 := L.foldl (relaxIns G s B (some Bi)) st0 with hst2
+  set st2 : Labels G s × DS G s :=
+    L.foldl (relaxIns G s B (some Bi)) st0 with hst2
   set d2 := st2.1 with hd2
   set Dn := insertMany G s st2.2 (reselected σ Ui piv') d2 with hDn
   have hsubpre : CallPre Bi Si σ.d := step_pre_cert_candidate hpre hfp h hpull
