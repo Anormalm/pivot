@@ -152,6 +152,21 @@ jobs:
             cat drafts/RootCreditBudgetCandidate.lean
           } > upstream/formal/lean/CandidateRootCreditBudget.lean
 
+          {
+            echo 'import Frontier.CHD.CostLog'
+            cat drafts/LoopCostFiniteCandidates.lean
+            cat drafts/IterCostRefinedCandidate.lean
+            cat drafts/LoopCostInsertCreditCandidate.lean
+            cat drafts/FinalResidualCandidate.lean
+            cat drafts/FullTerminalCreditCandidate.lean
+            cat drafts/CallCostFullCreditCandidate.lean
+            cat drafts/RecCostCreditCandidate.lean
+            cat drafts/LoopRecCostCreditCandidate.lean
+            cat drafts/RecordCreditBridgeCandidate.lean
+            cat drafts/RootCreditBudgetCandidate.lean
+            cat drafts/CallRecCostCreditCaseCandidate.lean
+          } > upstream/formal/lean/CandidateCallRecCostCreditCase.lean
+
       - name: Check all candidate modules
         working-directory: upstream/formal/lean
         shell: bash
@@ -199,6 +214,9 @@ jobs:
           echo "::group::CandidateRootCreditBudget"
           lake env lean CandidateRootCreditBudget.lean || status=1
           echo "::endgroup::"
+          echo "::group::CandidateCallRecCostCreditCase"
+          lake env lean CandidateCallRecCostCreditCase.lean || status=1
+          echo "::endgroup::"
           exit "$status"
 
-# candidate set revision: 16
+# candidate set revision: 17
