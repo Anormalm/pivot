@@ -57,13 +57,21 @@ remaining proof obligations.
 See [`notes/lean_patch_plan.md`](notes/lean_patch_plan.md) for the file-by-file Lean patch plan.
 See [`notes/new_parameter_route.md`](notes/new_parameter_route.md) for the square-root parameter retuning argument.
 See [`notes/prior_work.md`](notes/prior_work.md) for the dated prior-work audit.
-See [`notes/proof_status.md`](notes/proof_status.md) for a strict separation between established combinatorics, source-level overcharges, and the remaining Lean obligations.
-The uncompiled source-aligned proof sketches are in:
-- [`drafts/LoopCostFiniteCandidates.lean`](drafts/LoopCostFiniteCandidates.lean)
-- [`drafts/IterCostRefinedCandidate.lean`](drafts/IterCostRefinedCandidate.lean)
-- [`drafts/HomeOwnColourCandidate.lean`](drafts/HomeOwnColourCandidate.lean)
-- [`drafts/OwnHomeCandidates.lean`](drafts/OwnHomeCandidates.lean)
-- [`drafts/loop_cost_refinement.md`](drafts/loop_cost_refinement.md).
+See [`notes/proof_status.md`](notes/proof_status.md) for a strict separation between kernel-checked local accounting results and the remaining integration obligations.
+
+The main candidate Lean modules are checked in GitHub Actions against the pinned upstream C-HD snapshot. The current checked chain includes:
+- exact marked/emptied finite-set accounting;
+- the refined one-step insertion-credit inequality;
+- the loop insertion-credit telescope;
+- the final residual-group/W' bound;
+- the refined own-home colour inequality;
+- the full-call terminal credit theorem;
+- full-call cost assembly under a cheap BM.6 initialization bound;
+- the final natural-number cancellation of the expensive `I * p` term.
+
+The latest green candidate workflow is run `35956298994`. All 12 modules in that chain are `sorry`-free and `admit`-free.
+
+The remaining work is integration into the recursive cost-log/master-cost stack and the new parameter layer, not shortest-path correctness.
 
 ## Why the `+1` looks removable
 
@@ -296,16 +304,11 @@ BM.23 semantics makes that exception unnecessary for full calls.
 
 ## Next proof target
 
-The useful theorem is not "the experiments pass." It is a refinement of the
-actual loop cost:
+The local full-call cancellation is now represented by kernel-checked candidate lemmas. The next targets are integration:
 
-```text
-Full-call marking lemma:
-sum over children i of |markedGroups(sigma_i, U_i)|
-    <= total bichromatic FindPivots tree edges.
-```
+1. carry the full-call `I * p` credit through the recursive `CostLog` theorem rather than dropping it at the record boundary;
+2. integrate the already-compiled fresh one-block BM.6 insertion lemma into the `DCost/initCost` interface so initialization is priced separately from evolved inserts;
+3. replace the old `CostAggregate.Valid.cost_le` / master algebra with the refined budget that has no unconditional expensive `t * p` term;
+4. only then retune to constant `k` and `t = Theta(sqrt(N log N / m))`.
 
-A proof should inject every actual BM.23 marking into a non-final represented
-home, then reuse C-HD's existing PT-piece and `Cr/Be` charging lemmas.
-
-Only after that should the master-cost algebra be retuned to `k = 4`.
+The improved SSSP bound remains conditional until that integration and the final parameter proof are complete.
