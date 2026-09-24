@@ -1,0 +1,6 @@
+{
+  "M": 64,
+  "work_per_entry_at_ratio_1": 0.0,
+  "work_per_entry_at_ratio_4096": 11.0,
+  "observation": "Even with perfectly balanced median splits and counting only one linear scan per split, exhausting an oversized block costs Theta(p log(p/M)) total split-scan work."
+}
