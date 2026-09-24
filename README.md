@@ -324,3 +324,23 @@ lemmas. The next research target is no longer just cost-interface plumbing:
 
 The `O(sqrt(m N log N))` expression is a conditional target, not a theorem
 supported by the current DLazy amortized analysis.
+
+
+## Important BM.6 caveat
+
+The repository originally separated the raw BM.6 insertion cost from the generic evolved-structure insertion cost. That direct-operation observation is correct, but it is not enough for the master bound.
+
+The existing Layer-A proof charges:
+
+```text
+actual insertion work + increase in DLazy potential
+```
+
+and that fresh one-block potential contains a logarithmic `S_M` term. When the initial pivot block is much larger than its local block parameter `M`, the amortized charge can be `Theta(t)` per pivot even though the physical insertion is constant-time.
+
+See:
+- [`notes/fresh_init_potential_blocker.md`](notes/fresh_init_potential_blocker.md)
+- [`experiments/fresh_potential_growth.py`](experiments/fresh_potential_growth.py)
+- [`results/fresh_potential_growth_summary.json`](results/fresh_potential_growth_summary.json)
+
+Accordingly, the `O(sqrt(m N log N))` / `11/12 -> 7/8` consequence remains a research target, not a consequence of the already-green N4 accounting patch alone.
