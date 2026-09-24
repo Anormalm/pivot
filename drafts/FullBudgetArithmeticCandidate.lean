@@ -126,7 +126,10 @@ theorem budget_arith_full_credit_candidate
       _ ≤ 2 * a * R := Nat.mul_le_mul_left _ rtQ
   have eA : A * (tv + k * Q) ≤ 3 * a * R := by
     rw [Nat.mul_add]
-    omega
+    calc
+      A * tv + A * (k * Q) ≤ a * R + 2 * a * R :=
+        Nat.add_le_add eA1 eA2
+      _ = 3 * a * R := by ring
 
   -- Constant new/init terms.
   have enw : nw ≤ cn * R := by
@@ -139,9 +142,14 @@ theorem budget_arith_full_credit_candidate
         p * I0 ≤ p * (cI0 * k) := Nat.mul_le_mul_left _ hI0
         _ = cI0 * (k * p) := by ring
         _ ≤ cI0 * R := Nat.mul_le_mul_left _ rkp
+    have hp2 : 2 * p ≤ 2 * R :=
+      Nat.mul_le_mul_left _ rp
     have hs : p * (2 + I0) = 2 * p + p * I0 := by ring
     rw [hs]
-    omega
+    calc
+      2 * p + p * I0 ≤ 2 * R + cI0 * R :=
+        Nat.add_le_add hp2 hpI0
+      _ = (2 + cI0) * R := by ring
 
   -- Child constants and cheap/expensive marking split.
   have enchild : C0 * nch ≤ c9 * R := by
@@ -290,7 +298,10 @@ theorem budget_arith_full_credit_candidate
         _ ≤ cI * R := Nat.mul_le_mul_left _ rtJ
     have hs : (1 + I) * J = J + J * I := by ring
     rw [hs]
-    omega
+    calc
+      J + J * I ≤ R + cI * R :=
+        Nat.add_le_add rJ hIJ
+      _ = (1 + cI) * R := by ring
 
   have eWrI : Wr * (1 + I) ≤ (1 + cI) * R := by
     have hWI : Wr * I ≤ cI * R := by
@@ -300,17 +311,53 @@ theorem budget_arith_full_credit_candidate
         _ ≤ cI * R := Nat.mul_le_mul_left _ rtWr
     have hs : Wr * (1 + I) = Wr + Wr * I := by ring
     rw [hs]
-    omega
+    calc
+      Wr + Wr * I ≤ R + cI * R :=
+        Nat.add_le_add rWr hWI
+      _ = (1 + cI) * R := by ring
 
   have eW : W ≤ R := by
     have hkq : k * Q ≤ t * Q := Nat.mul_le_mul_right _ hkt
-    omega
+    exact hW.trans (hkq.trans rtQ)
   have eW' : W' ≤ R := le_trans hW' rU
   have eadW : ad * W' ≤ ad * R :=
     Nat.mul_le_mul_left _ eW'
   have ebd : bd ≤ bd * R := Nat.le_mul_of_pos_right _ r1
   have escan : scanC * Del ≤ scanC * R :=
     Nat.mul_le_mul_left _ rDel
+
+  have h3S : 3 * S ≤ 3 * R :=
+    Nat.mul_le_mul_left _ rS
+
+  have hinitBlock :
+      nw + S + p * (2 + I0)
+        ≤ cn * R + R + (2 + cI0) * R := by
+    exact Nat.add_le_add (Nat.add_le_add enw rS) epI0
+
+  have hchildBlock :
+      1 + C0 * nch + C1 * U + (1 + I) * J
+        ≤ R + c9 * R + C1 * R + (1 + cI) * R := by
+    exact Nat.add_le_add
+      (Nat.add_le_add (Nat.add_le_add r1 enchild) eC1) eJI
+
+  have hfinalBlock :
+      1 + S + W + W'
+          + Wr * (1 + I)
+          + (ad * W' + bd)
+          + S
+        ≤
+      R + R + R + R
+          + (1 + cI) * R
+          + (ad * R + bd * R)
+          + R := by
+    have hadbd : ad * W' + bd ≤ ad * R + bd * R :=
+      Nat.add_le_add eadW ebd
+    exact Nat.add_le_add
+      (Nat.add_le_add
+        (Nat.add_le_add
+          (Nat.add_le_add
+            (Nat.add_le_add
+              (Nat.add_le_add r1 rS) eW) eW') eWrI) hadbd) rS
 
   have hbase_le :
       base ≤
@@ -325,12 +372,23 @@ theorem budget_arith_full_credit_candidate
               + (ad * R + bd * R)
               + R) := by
     rw [hbase]
-    omega
+    exact Nat.add_le_add
+      (Nat.add_le_add
+        (Nat.add_le_add
+          (Nat.add_le_add
+            (Nat.add_le_add
+              (Nat.add_le_add escan eA) h3S) hinitBlock) hchildBlock) rcm)
+      hfinalBlock
 
   have hmark_le :
       (6 * k + 1) * (p + Cr + Be) + I * (Cr + Be)
         ≤ 14 * R + cI * R :=
     Nat.add_le_add hcheap hICB
+
+  have hcancel' :
+      cost ≤ base
+        + ((6 * k + 1) * (p + Cr + Be) + I * (Cr + Be)) := by
+    simpa [Nat.add_assoc] using hcancel
 
   have hcombined :
       cost ≤
@@ -345,27 +403,35 @@ theorem budget_arith_full_credit_candidate
               + (ad * R + bd * R)
               + R))
         + (14 * R + cI * R) := by
-    exact le_trans hcancel
-      (Nat.add_le_add hbase_le hmark_le)
+    exact hcancel'.trans (Nat.add_le_add hbase_le hmark_le)
 
-  have hcoef :
-      (scanC + 3 * a + cn + c9 + C1 + cI0 + 4 * cI
-        + 2 * ad + 2 * bd + 40) * R
-      =
-        scanC * R
+  have hcompact :
+      (scanC * R
           + 3 * a * R
-          + cn * R
-          + c9 * R
-          + C1 * R
-          + cI0 * R
-          + 4 * cI * R
-          + 2 * ad * R
-          + 2 * bd * R
-          + 40 * R := by
+          + 3 * R
+          + (cn * R + R + (2 + cI0) * R)
+          + (R + c9 * R + C1 * R + (1 + cI) * R)
+          + R
+          + (R + R + R + R
+              + (1 + cI) * R
+              + (ad * R + bd * R)
+              + R))
+        + (14 * R + cI * R)
+      =
+      (scanC + 3 * a + cn + c9 + C1 + cI0
+        + 3 * cI + ad + bd + 29) * R := by
     ring
 
-  rw [hcoef]
-  omega
+  have hcoef_le :
+      scanC + 3 * a + cn + c9 + C1 + cI0
+          + 3 * cI + ad + bd + 29
+        ≤
+      scanC + 3 * a + cn + c9 + C1 + cI0
+          + 4 * cI + 2 * ad + 2 * bd + 40 := by
+    omega
+
+  rw [hcompact] at hcombined
+  exact hcombined.trans (Nat.mul_le_mul_right R hcoef_le)
 
 end BM
 end CHD
