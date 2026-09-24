@@ -94,3 +94,75 @@ for path in [
     p.write_text(s)
 
 print("patched stage-1 DCost.initIns interface")
+
+
+# 5. Thread the fresh insertion coefficient through CostLog's record budget.
+replace(
+    "Frontier/CHD/CostLog.lean",
+    """noncomputable def budOf (k hins hext ad bd I nw : ℕ) (r : CallRec G s (FPData G s)) (cs : ℕ) : ℕ :=""",
+    """noncomputable def budOf (k hins hext ad bd I I0 nw : ℕ) (r : CallRec G s (FPData G s)) (cs : ℕ) : ℕ :="""
+)
+
+replace(
+    "Frontier/CHD/CostLog.lean",
+    """    + (nw + r.S.card + r.p * (2 + I))""",
+    """    + (nw + r.S.card + r.p * (2 + I0))"""
+)
+
+replace(
+    "Frontier/CHD/CostLog.lean",
+    """    {ap bp ad bd I nw : ℕ}
+    (hsubc : SubCost (chgOf k (1 + bp + bd) (ap + ad + 4) (2 * (3 * k) + 1 + I))
+      (budOf k hins hext ad bd I nw) sub (DelInv G s))""",
+    """    {ap bp ad bd I I0 nw : ℕ}
+    (hsubc : SubCost (chgOf k (1 + bp + bd) (ap + ad + 4) (2 * (3 * k) + 1 + I))
+      (budOf k hins hext ad bd I I0 nw) sub (DelInv G s))"""
+)
+
+replace(
+    "Frontier/CHD/CostLog.lean",
+    """    (hinsI : DC.ins (l + 1) ≤ I) (hnew : DC.new (l + 1) ≤ nw)
+    (hMτ : DC.M (l + 1) ≤ τ l)""",
+    """    (hinsI : DC.ins (l + 1) ≤ I) (hinitI : DC.initIns (l + 1) ≤ I0)
+    (hnew : DC.new (l + 1) ≤ nw)
+    (hMτ : DC.M (l + 1) ≤ τ l)"""
+)
+
+replace(
+    "Frontier/CHD/CostLog.lean",
+    """    RecCost (chgOf k (1 + bp + bd) (ap + ad + 4) (2 * (3 * k) + 1 + I)) (budOf k hins hext ad bd I nw) lg := by""",
+    """    RecCost (chgOf k (1 + bp + bd) (ap + ad + 4) (2 * (3 * k) + 1 + I)) (budOf k hins hext ad bd I I0 nw) lg := by"""
+)
+
+replace(
+    "Frontier/CHD/CostLog.lean",
+    """    callC_cost hout hsort hsimp hk hsub hpre hI hlow hrel hpull hdel hinsI hnew hMτ hgMτ""",
+    """    callC_cost hout hsort hsimp hk hsub hpre hI hlow hrel hpull hdel hinsI hinitI hnew hMτ hgMτ"""
+)
+
+replace(
+    "Frontier/CHD/CostLog.lean",
+    """    {ap bp ad bd I nw : ℕ}
+    (hpull : ∀ l x, DC.pull (l + 1) x ≤ ap * x + bp) (hdel : ∀ l x, DC.del (l + 1) x ≤ ad * x + bd)
+    (hinsI : ∀ l, DC.ins (l + 1) ≤ I) (hnew : ∀ l, DC.new (l + 1) ≤ nw)""",
+    """    {ap bp ad bd I I0 nw : ℕ}
+    (hpull : ∀ l x, DC.pull (l + 1) x ≤ ap * x + bp) (hdel : ∀ l x, DC.del (l + 1) x ≤ ad * x + bd)
+    (hinsI : ∀ l, DC.ins (l + 1) ≤ I) (hinitI : ∀ l, DC.initIns (l + 1) ≤ I0)
+    (hnew : ∀ l, DC.new (l + 1) ≤ nw)"""
+)
+
+replace(
+    "Frontier/CHD/CostLog.lean",
+    """    ∀ l, SubCost (chgOf k (1 + bp + bd) (ap + ad + 4) (2 * (3 * k) + 1 + I)) (budOf k hins hext ad bd I nw)""",
+    """    ∀ l, SubCost (chgOf k (1 + bp + bd) (ap + ad + 4) (2 * (3 * k) + 1 + I)) (budOf k hins hext ad bd I I0 nw)"""
+)
+
+replace(
+    "Frontier/CHD/CostLog.lean",
+    """      (bmsspC_reccost hout hsort hsimp hk τ hpull hdel hinsI hnew hMτ hgMτ l) hpre hI hlow hrel
+      (hpull l) (hdel l) (hinsI l) (hnew l) (hMτ l) (hgMτ l)""",
+    """      (bmsspC_reccost hout hsort hsimp hk τ hpull hdel hinsI hinitI hnew hMτ hgMτ l) hpre hI hlow hrel
+      (hpull l) (hdel l) (hinsI l) (hinitI l) (hnew l) (hMτ l) (hgMτ l)"""
+)
+
+print("patched stage-2 CostLog fresh-init propagation")
