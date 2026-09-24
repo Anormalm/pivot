@@ -125,7 +125,7 @@ theorem callC_reccost_credit_case_candidate
 
   · obtain ⟨r, lgc, hlg, hrpart, hroot⟩ :=
       callC_partial_root_credit_budget_candidate
-        hout hsort hsimp hk hsub hpre hI hlow hrel hfull
+        hout hsort hsimp hk hsub hpre hI hlow hrelRoot hfull
         hpull hdel hinsI hnew hMτ hgMτ
 
     rw [hlg] at hlg0
