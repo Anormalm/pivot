@@ -1,6 +1,6 @@
 # Proof status
 
-Date: 2026-09-23
+Date: 2026-09-24
 
 This note separates what is already elementary/source-level from what still
 has to be proved inside the upstream C-HD formal cost chain.
@@ -93,125 +93,159 @@ full calls proves `S_X subset U_X`.
 The proposed refinement should therefore be a cost-accounting patch, not a
 new shortest-path correctness argument.
 
-## Still unproved in upstream Lean
+## Kernel-checked candidate chain
 
-### P1. Finite-set and one-iteration layer — COMPILED
+GitHub Actions checks the candidate modules against the exact audited C-HD snapshot
+`98c53accb47a505482a1781597ae14bf67e81cec` using Lean 4.34.0.
 
-GitHub Actions checks the candidates against the exact audited C-HD snapshot
-`98c53acc...` using Lean 4.34.0.
+The latest green run is:
 
-The following modules compiled without errors in workflow run
-`35839815618`:
+```text
+workflow: Lean candidate checks
+run:      35956298994
+branch:   loop-telescope
+result:   success
+```
 
-- `drafts/LoopCostFiniteCandidates.lean`
+The following modules compiled successfully in that run:
+
+- `LoopCostFiniteCandidates.lean`
   - exact nonempty/emptying partition;
   - emptied groups meet the child;
-  - marked and emptied groups are disjoint;
-  - `marked + emptied <= meetings`.
-- `drafts/IterCostRefinedCandidate.lean`
-  - refined one-step cost inequality with `I * emptied` credit;
-  - exact loop-entry nonempty-group count.
-- `drafts/HomeOwnColourCandidate.lean`
-  - generic extra-`none` home colour lemma.
-- `drafts/FreshInsertCandidate.lean`
-  - fresh one-block insertion bound.
+  - marked/emptied disjointness;
+  - marked + emptied <= meetings.
+- `IterCostRefinedCandidate.lean`
+  - refined one-step cost with `I * emptied` credit.
+- `LoopCostInsertCreditCandidate.lean`
+  - telescopes the `I`-weighted emptying potential through the actual loop.
+- `FinalResidualCandidate.lean`
+  - bounds final nonempty groups by original groups meeting `W'`.
+- `HomeOwnColourCandidate.lean`
+  - adds the distinct own/`none` home colour.
+- `MkOwnColourCandidate.lean`
+  - aggregate `mkOf + ownGroups <= p + |Cr| + |Be|` bridge.
+- `FullTerminalCreditCandidate.lean`
+  - converts the loop-final nonempty potential into terminal own-group credit.
+- `CallCostFullCreditCandidate.lean`
+  - assembles a full-call record-cost inequality with `+ I * p` on the left,
+    assuming a cheap BM.6 initialization bound.
+- `RecCostCreditCandidate.lean`
+  - generic record-local credit predicate.
+- `LoopRecCostCreditCandidate.lean`
+  - structural transport of record-local credit through shifted/appended child logs.
+- `FreshInsertCandidate.lean`
+  - fresh one-block insertion cost bound.
+- `FullCreditCancellationCandidate.lean`
+  - arithmetic cancellation of the expensive `I * p` term using the refined
+    `mk + own` bound.
 
-The same CI run localized the remaining failures to the aggregate loop
-telescope and aggregate own-home colour theorem; no error was reported in
-the four modules above.
-
-### P1a. Refined loop insertion-credit telescope — IN CI
-
-Strengthen the current one-sided nonempty-group lemma to an equality and
-telescope `emptiedGroups` through the loop.
-
-Target shape:
-
-```text
-total_marked + p <= mkOf(X) + ownGroupsOf(X).
-```
-
-### P2. Residual group -> own `none` home — SOURCE CLOSED / TRANSPORT OPEN
-
-For a full call, every group still nonempty after the child loop meets the
-parent's final `W'` region, and such a member is in the parent return but
-in no direct child return.  The existing `Ranges.home` definition therefore
-returns `none`.
-
-Upstream `BMTrace.callC_log` already contains this exact ownership argument
-locally for sources of `W'` relaxation edges.  The remaining work is to
-export/generalize it for arbitrary `W'` vertices in the traced log.
-
-### P3. Refined colour inequality with own groups — IN CI
-
-The generic extra-`none` colour lemma already compiles.  The aggregate
-`MkOwnColourCandidate` proof is being checked after repairing only the
-bridge from `Finset.image home` to `(List.map home).toFinset`.
-
-Target:
+A direct audit of these 12 files found:
 
 ```text
-mkOf(X) + ownGroupsOf(X)
-    <= p + |Cr(X)| + |Be(X)|.
+sorry: 0
+admit: 0
 ```
 
-Combining P1 and P3 cancels the `p`:
+So the central N4-side local accounting result is no longer merely an uncompiled
+sketch. It is represented by kernel-checked, hole-free candidate lemmas against
+the pinned upstream source.
+
+## What is still not proved
+
+### P1. Recursive root-record credit integration
+
+The structural `RecCostCredit` and loop transport lemmas compile, and the
+full-call root cost theorem compiles, but they still need to be joined into a
+replacement for upstream:
 
 ```text
-total_marked <= |Cr(X)| + |Be(X)|.
+callC_reccost
+bmsspC_reccost
 ```
 
-This is the key removal of the expensive once-per-group insertion charge.
+that preserves the full-call `I * p` credit all the way to `CostLe`.
 
-### P4. Separate fresh and evolved insertion costs — LOCAL LEMMA COMPILED
+This is now primarily proof plumbing rather than a missing combinatorial idea.
 
-The fresh one-block insertion lemma compiles against the upstream snapshot.
-The remaining task is interface integration: refine `DCost/initCost` so
-BM.6 consumes that constant bound while BM.23/BM.25/BM.28 retain the evolved
-`DC.ins(l)` charge.
+### P2. BM.6 fresh-insertion interface integration
 
-### P5. Preserve the `I*p` credit through CostLog — FORMAL ARCHITECTURE OPEN
+The concrete fresh insertion lemma is compiled:
 
-The strengthened loop theorem naturally carries `cost + I*p` for full
-calls.  Current `RecCost/budOf` discards that credit before `CostLe`
-sees the global `Cr/Be` counters.
+```text
+fresh one-block BM.6 insertion = O(p)
+```
 
-The current preferred patch is a generic
-`RecCostCredit` relation, drafted in
-`drafts/RecCostCreditCandidate.lean`, with a record-local full-call credit
-`I*p`.  No change to shortest-path semantics, `CallRec`, or `LogInv`
-is required.
+but upstream `BMCost.initCost` still definitionally uses the ordinary
+evolved-structure field `DC.ins`.
 
-### P6. Re-run master algebra and parameter arithmetic
+The attempted `DCost.initIns` interface experiment correctly exposed the
+patch radius:
 
-Only after the remaining P1a/P2/P3/P4/P5 integration closes should the parameters be changed to the candidate
+- named `DCost` constructors;
+- four positional zero-cost constructors;
+- `callC_cost`;
+- `budOf / callC_reccost / bmsspC_reccost`;
+- ultimately the master instantiation.
+
+The first experiment failed because those downstream constructors/theorems had
+not yet been updated, not because the fresh-insertion lemma failed.
+
+### P3. Refined global `CostLe` theorem
+
+The local arithmetic cancellation theorem compiles, but upstream
+`tracedCounters_cost_le` still consumes the old `RecCost/budOf` shape with
+an unconditional expensive `t * p` term.
+
+A refined version must consume the credit-carrying record facts and use:
+
+```text
+mkOf + ownGroups <= p + |Cr| + |Be|
+```
+
+to cancel the full-call insertion credit.
+
+Partial calls can retain the existing `t * |S|` absorption.
+
+### P4. New master parameter layer
+
+Only after P1--P3 are integrated should the frozen parameter program be changed.
+
+Candidate choice:
 
 ```text
 k = 4
-t = Theta(sqrt(N log N / m)).
+t = Theta(sqrt(N log N / m))
+L = Theta(log N / t)
 ```
 
-The resulting candidate core expression is
+The target core expression is
 
 ```text
 O(N log N / t + m t)
-    = O(sqrt(m N log N)).
+  = O(sqrt(m N log N)).
 ```
 
-At `m = n log^(3/4) n`, this would change the dominant logarithmic exponent
+The repository already contains a source-level parameter audit showing that the
+visible lower-order terms remain below this candidate envelope on the current
+C-HD density branch, but the corresponding Lean master theorem has not yet
+been rebuilt.
+
+At `m = n log^(3/4) n`, the conditional exponent change remains:
 
 ```text
-11/12 -> 7/8.
+11/12 -> 7/8
 ```
 
 ## Claim discipline
 
-Until the aggregate lemmas, credit-carrying cost chain, and parameter layer are compiled and integrated into the upstream model, this
-repository should say:
+At the current checkpoint it is accurate to say:
 
-- "candidate refinement";
-- "conditional bound";
-- "source-level overcharge";
-- "experimentally stress-tested combinatorial lemma".
+- the proposed N4 tightening is supported by a direct paper-level argument;
+- the local full-call accounting/cancellation lemmas are kernel-checked against
+  the pinned C-HD snapshot;
+- the fresh BM.6 one-block insertion bound is kernel-checked;
+- the final improved SSSP complexity theorem is **not** yet proved.
 
-It should **not** say that an improved SSSP theorem has been proved.
+The repository should still avoid claiming a completed
+`O(sqrt(m N log N))` directed SSSP theorem until the recursive cost-log,
+fresh-init interface, global CostLe, and parameter/master layers are integrated.
