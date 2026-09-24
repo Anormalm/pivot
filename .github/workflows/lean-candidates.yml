@@ -194,6 +194,12 @@ jobs:
             cat drafts/RefinedAggregateCandidate.lean
           } > upstream/formal/lean/CandidateRefinedAggregate.lean
 
+          {
+            echo 'import Frontier.CHD.CostLe'
+            cat drafts/FullCreditCancellationCandidate.lean
+            cat drafts/FullBudgetArithmeticCandidate.lean
+          } > upstream/formal/lean/CandidateFullBudgetArithmetic.lean
+
       - name: Check all candidate modules
         working-directory: upstream/formal/lean
         shell: bash
@@ -253,6 +259,9 @@ jobs:
           echo "::group::CandidateRefinedAggregate"
           lake env lean CandidateRefinedAggregate.lean || status=1
           echo "::endgroup::"
+          echo "::group::CandidateFullBudgetArithmetic"
+          lake env lean CandidateFullBudgetArithmetic.lean || status=1
+          echo "::endgroup::"
           exit "$status"
 
-# candidate set revision: 20
+# candidate set revision: 21
