@@ -1,0 +1,8 @@
+{
+  "M": 64,
+  "max_ratio_s_over_M": 4096,
+  "potential_per_entry_at_ratio_1": 0.234375,
+  "potential_per_entry_at_ratio_4096": 2520.197124481201,
+  "ell_at_end_at_ratio_4096": 12,
+  "observation": "Existing one-block potential per entry grows with log2(s/M); direct O(1) insertion is not O(1) amortized initialization under this potential."
+}
