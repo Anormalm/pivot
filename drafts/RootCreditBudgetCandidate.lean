@@ -117,8 +117,8 @@ theorem callC_full_root_credit_budget_candidate
     rw [hω]
 
   refine ⟨r, lgc, hlg, hrfull, ?_⟩
-  unfold fullPivotCredit budCreditCaseCandidate
-  rw [if_pos hrfull]
+  simp only [fullPivotCredit, budCreditCaseCandidate, hrfull,
+    if_pos]
   unfold budFullCreditCandidate
   rw [hp, htv, hdl, ← hchg, ← hown]
   exact hcost
@@ -217,11 +217,12 @@ theorem callC_partial_root_credit_budget_candidate
     exact Nat.mul_le_mul_right I (Finset.card_le_card hT6S)
 
   refine ⟨r, lgc, hlg, hrpart, ?_⟩
-  unfold fullPivotCredit budCreditCaseCandidate
-  rw [if_neg hrpart]
+  simp only [fullPivotCredit, budCreditCaseCandidate, hrpart,
+    if_neg, Nat.zero_add]
   unfold budOf
   rw [htv, hdl, hp, ← hchg]
-  omega
+  exact le_trans hcost (by
+    omega)
 
 end BM
 end CHD
