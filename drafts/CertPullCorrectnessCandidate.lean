@@ -19,7 +19,7 @@ variable {B : WLab G s} {S : Finset (Fin G.n)}
 
 theorem Si_facts_cert_candidate
     (h : LInv G s B S d0 d1 P0 B'0 σ)
-    (hpull : CertPullSpec G s σ B S0 Bi D1)
+    (hpull : CertPullSpec (G := G) (s := s) σ B S0 Bi D1)
     {x : Fin G.n} (hx : x ∈ expand σ S0 Bi) :
     (x ∈ Aset G s B S d1 P0 ∧ x ∉ σ.U ∧
       σ.B' ≤ dis (s := s) x) ∧ σ.d x < Bi := by
@@ -32,7 +32,7 @@ theorem Si_facts_cert_candidate
 
 theorem certified_mem_expand_cert_candidate
     (h : LInv G s B S d0 d1 P0 B'0 σ)
-    (hpull : CertPullSpec G s σ B S0 Bi D1)
+    (hpull : CertPullSpec (G := G) (s := s) σ B S0 Bi D1)
     {y : Fin G.n} (hc : Certified G s σ y)
     (hlt : dis (s := s) y < Bi) :
     y ∈ expand σ S0 Bi := by
@@ -48,7 +48,7 @@ theorem certified_mem_expand_cert_candidate
 
 theorem UKi_sub_cert_candidate
     (h : LInv G s B S d0 d1 P0 B'0 σ)
-    (hpull : CertPullSpec G s σ B S0 Bi D1)
+    (hpull : CertPullSpec (G := G) (s := s) σ B S0 Bi D1)
     {v : Fin G.n}
     (hv : v ∈ Utilde Bi (expand σ S0 Bi : Set (Fin G.n))) :
     v ∈ Aset G s B S d1 P0 ∧ v ∉ σ.U ∧
@@ -68,7 +68,7 @@ theorem step_pre_cert_candidate
     (hpre : CallPre B S d0)
     (hfp : FPContract B S d0 d1 p P0 Q W)
     (h : LInv G s B S d0 d1 P0 B'0 σ)
-    (hpull : CertPullSpec G s σ B S0 Bi D1) :
+    (hpull : CertPullSpec (G := G) (s := s) σ B S0 Bi D1) :
     CallPre Bi (expand σ S0 Bi) σ.d where
   walk := h.walk
   claimC := by
@@ -101,7 +101,7 @@ theorem step_pre_cert_candidate
     (Si_facts_cert_candidate h hpull hx).2
 
 theorem pull_rest_some_cert_candidate
-    (hpull : CertPullSpec G s σ B S0 Bi D1)
+    (hpull : CertPullSpec (G := G) (s := s) σ B S0 Bi D1)
     {y : Fin G.n} {k : WLab G s}
     (hk : D1 y = some k) :
     σ.D y = some k ∧ y ∉ S0 := by
@@ -110,7 +110,7 @@ theorem pull_rest_some_cert_candidate
   exact ⟨hk, hy⟩
 
 theorem pull_rest_keep_cert_candidate
-    (hpull : CertPullSpec G s σ B S0 Bi D1)
+    (hpull : CertPullSpec (G := G) (s := s) σ B S0 Bi D1)
     {y : Fin G.n} (hy : y ∉ S0) :
     D1 y = σ.D y := by
   rw [hpull.rest y, if_neg hy]
