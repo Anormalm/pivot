@@ -50,7 +50,7 @@ jobs:
 
       - name: Build required upstream modules
         working-directory: upstream/formal/lean
-        run: lake build Frontier.CHD.LoopCost Frontier.Homes Frontier.CHD.DLazyFacts Frontier.CHD.CrBe Frontier.CHD.CostLog
+        run: lake build Frontier.CHD.LoopCost Frontier.Homes Frontier.CHD.DLazyFacts Frontier.CHD.CrBe Frontier.CHD.CostLog Frontier.CHD.CostLe
 
       - name: Prepare candidate modules
         shell: bash
@@ -171,4 +171,4 @@ jobs:
           echo "::endgroup::"
           exit "$status"
 
-# candidate set revision: 13
+# candidate set revision: 14
