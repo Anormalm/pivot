@@ -5,25 +5,23 @@
 
 ## Conclusion
 
-The BM.6 pivot insertions into the newly created DLazy structure cost
+The BM.6 pivot insertions into the newly created DLazy structure have
 
 ```text
 O(p)
 ```
 
-at the existing concrete/Layer-A operation-cost level.
+**raw operation cost** at the concrete/Layer-A insertion level.
 
-The current master analysis nevertheless charges them as
+This does **not** imply O(p) amortized cost in the existing full proof.
+`BMTeleLoop` uses a family potential to pre-pay the lazy splitting work
+created by a large unsplit block. For `p/M = 2^t`, that potential can grow
+as Theta(p t).
 
-```text
-O(p * DC.ins(l)) = O(p t)
-```
-
-because the generic `BMCost.initCost` uses the same evolved-structure
-insertion bound for both fresh BM.6 inserts and later inserts.
-
-So this part is not an algorithmic conjecture: it is an **analysis-interface
-overcharge** already visible from upstream theorems.
+Therefore the generic O(t) BM.6 charge is coarse as a statement about raw
+insertion time, but its asymptotic scale is not currently removable from the
+end-to-end amortized proof. See
+`notes/fresh_init_amortization_blocker.md`.
 
 ## 1. New structure has one block
 
@@ -164,7 +162,7 @@ O(t p).
 
 This is exactly one of the terms preventing constant `k`.
 
-## 6. Recommended formal repair
+## 6. Earlier interface-only repair and why it is insufficient
 
 The clean generic repair is to distinguish fresh insertion from ordinary
 insertion in the cost interface.
@@ -189,23 +187,13 @@ initCost DC lv p P :=
   + p * (2 + DC.initIns lv)
 ```
 
-For DLazy instantiate
+At the raw-cost interface one can set `initIns(l)=4`, and this patch was
+successfully threaded through the abstract cost stack. The full telescoping
+proof then fails in `BMTeleLoop`, because the post-initialization potential
+cannot be bounded by `4p`.
 
-```text
-initIns(l) = 4
-```
-
-(or a slightly larger explicit constant if that makes the RAM refinement
-proof easier).
-
-All BM.23/BM.25/BM.27--28 operations continue using the ordinary
-`DC.ins(l)=O(t)` bound.
-
-The upstream search shows only a small number of explicit `DCost where`
-constructors, so the field addition appears mechanically contained.
-
-An alternative is a specialized bulk-initialization cost/interface, but the
-separate `initIns` field is closer to the existing program.
+So a separate `initIns` field is not sufficient unless accompanied by a new
+potential theorem or a changed initialization/data structure.
 
 ## 7. Why this matters to the candidate exponent
 
@@ -225,9 +213,6 @@ O(N t / k)
 
 and forces the old `k ≈ sqrt(t)` balance.
 
-Therefore both refinements are necessary:
-
-1. remove the per-group `O(t)` re-selection exception;
-2. price BM.6 fresh insertion at `O(1)` per pivot.
-
-Only then can the master expression plausibly support constant `k`.
+The N4 refinement removes one source of O(t p), but the existing BM.6
+amortization still leaves another. A new exponent therefore needs an
+additional algorithmic/amortized insight beyond the N4 accounting fix.
