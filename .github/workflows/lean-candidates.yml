@@ -50,7 +50,7 @@ jobs:
 
       - name: Build required upstream modules
         working-directory: upstream/formal/lean
-        run: lake build Frontier.CHD.LoopCost Frontier.Homes Frontier.CHD.DLazyFacts Frontier.CHD.CrBe Frontier.CHD.CostLog Frontier.CHD.CostLe
+        run: lake build Frontier.CHD.LoopCost Frontier.Homes Frontier.CHD.DLazyFacts Frontier.CHD.CrBe Frontier.CHD.CostLog Frontier.CHD.CostLe Frontier.CHD.BMTeleChd
 
       - name: Prepare candidate modules
         shell: bash
@@ -167,6 +167,12 @@ jobs:
             cat drafts/CallRecCostCreditCaseCandidate.lean
           } > upstream/formal/lean/CandidateCallRecCostCreditCase.lean
 
+          {
+            echo 'import Frontier.CHD.BMTeleChd'
+            echo 'import Frontier.CostSkeleton'
+            cat drafts/SqrtParameterCandidate.lean
+          } > upstream/formal/lean/CandidateSqrtParameters.lean
+
       - name: Check all candidate modules
         working-directory: upstream/formal/lean
         shell: bash
@@ -217,6 +223,9 @@ jobs:
           echo "::group::CandidateCallRecCostCreditCase"
           lake env lean CandidateCallRecCostCreditCase.lean || status=1
           echo "::endgroup::"
+          echo "::group::CandidateSqrtParameters"
+          lake env lean CandidateSqrtParameters.lean || status=1
+          echo "::endgroup::"
           exit "$status"
 
-# candidate set revision: 17
+# candidate set revision: 18
