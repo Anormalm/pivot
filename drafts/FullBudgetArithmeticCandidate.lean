@@ -175,11 +175,57 @@ theorem budget_arith_full_credit_candidate
             + (ad * W' + bd)
             + S) with hbase
 
+  have hchild :
+      1 + cs + (1 + I) * J + I * own ≤
+        1 + C0 * nch + C1 * U + (1 + I) * J
+          + (6 * k + 1) * mk + I * mk + I * own := by
+    omega
+
+  set pre :=
+      scanC * Del
+        + A * (tv + k * Q)
+        + 3 * S
+        + (nw + S + p * (2 + I0)) with hpre
+  set fin :=
+      cm
+        + (1 + S + W + W'
+            + Wr * (1 + I)
+            + (ad * W' + bd)
+            + S) with hfin
+
+  have horig :
+      scanC * Del
+          + A * (tv + k * Q)
+          + 3 * S
+          + (nw + S + p * (2 + I0))
+          + (1 + cs + (1 + I) * J + I * own)
+          + cm
+          + (1 + S + W + W'
+              + Wr * (1 + I)
+              + (ad * W' + bd)
+              + S)
+        =
+      pre + (1 + cs + (1 + I) * J + I * own) + fin := by
+    rw [hpre, hfin]
+    ring
+
+  have htarget :
+      base + (6 * k + 1) * mk + I * mk + I * own
+        =
+      pre
+        + (1 + C0 * nch + C1 * U + (1 + I) * J
+            + (6 * k + 1) * mk + I * mk + I * own)
+        + fin := by
+    rw [hbase, hpre, hfin]
+    ring
+
   have hcost' :
       cost + I * p ≤
         base + (6 * k + 1) * mk + I * mk + I * own := by
-    rw [hbase]
-    omega
+    rw [horig] at hcost
+    rw [htarget]
+    exact hcost.trans
+      (Nat.add_le_add_right (Nat.add_le_add_left hchild pre) fin)
 
   have hcancel :=
     full_credit_cancel_candidate
