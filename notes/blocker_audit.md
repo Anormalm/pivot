@@ -12,13 +12,33 @@ The local finite-set / loop-credit implementation now compiles against Lean 4.34
 
 Upstream concludes `g_j <= c_j+1` because c_j bichromatic edges leave c_j+1 monochromatic components. BM.23 re-selects only when the residual group is nonempty, so there is always one additional terminal home/component beyond the g_j re-selection homes. Therefore `g_j <= c_j` at paper level.
 
-## 2. Initial pivot insertion charged as O(t)
+## 2. Initial pivot insertion / deferred DLazy potential
 
-Status: RESOLVED-SOURCE / LOCAL-LEAN-COMPILED / FORMAL-INTERFACE-OPEN.
+Status: RAW-COST-CLOSED / AMORTIZED-BLOCKER.
 
-The concrete fresh-insert corollary `fresh_insManyC_cost_le_candidate` compiles; replacing the abstract `initCost` use of generic `DC.ins` remains open.
+The fresh one-block insertion routine has O(p) raw cost, and the corresponding
+candidate lemma compiles. But the full `BMTele` proof does not charge only
+raw time: `insMany_tele` also accounts for the increase in the lazy
+potential that will later pay for splitting.
 
-`newC` starts with one block; upstream `insertL_blocks` / `insManyC_blocks` preserve block count; `insManyC_cost_le` with NB=1 gives constant cost per initial pivot. The remaining work is to stop `BMCost.initCost` from using the generic evolved-structure insertion charge.
+For a fresh one-block structure,
+
+```
+potM =
+  3
+  + 420 * max(0,p-M)
+  + 210 * Ssum(M,p)
+  + floor(12p/M).
+```
+
+When `p/M = 2^t`, `Ssum(M,p) = Omega(p t)`, so initialization creates
+Omega(p t) potential. The full `initIns` patch builds through `CostLe` and
+`MasterCost` but fails in `BMTeleLoop` exactly where this potential must be
+paid.
+
+Therefore this is not merely an interface overcharge. It is the current main
+blocker to the constant-k / square-root parameter route. See
+`notes/fresh_init_amortization_blocker.md`.
 
 ## 3. Final residual group has an own/none home
 
