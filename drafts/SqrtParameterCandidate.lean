@@ -29,8 +29,7 @@ def LsqrtCandidate (n t : ℕ) : ℕ := lgN n / t + 1
 
 theorem LsqrtCandidate_pos (n t : ℕ) :
     1 ≤ LsqrtCandidate n t := by
-  unfold LsqrtCandidate
-  omega
+  simp [LsqrtCandidate]
 
 /-- The standard depth coverage lemma uses only t>0, not the old cube-root
 parameter specification. -/
