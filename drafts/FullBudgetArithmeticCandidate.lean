@@ -267,9 +267,8 @@ theorem budget_arith_full_credit_candidate
   have escan : scanC * Del ≤ scanC * R :=
     Nat.mul_le_mul_left _ rDel
 
-  rw [hbase] at hcancel
-  have hbig :
-      cost ≤
+  have hbase_le :
+      base ≤
         scanC * R
           + 3 * a * R
           + 3 * R
@@ -279,9 +278,30 @@ theorem budget_arith_full_credit_candidate
           + (R + R + R + R
               + (1 + cI) * R
               + (ad * R + bd * R)
-              + R)
-          + 14 * R + cI * R := by
+              + R) := by
+    rw [hbase]
     omega
+
+  have hmark_le :
+      (6 * k + 1) * (p + Cr + Be) + I * (Cr + Be)
+        ≤ 14 * R + cI * R :=
+    Nat.add_le_add hcheap hICB
+
+  have hcombined :
+      cost ≤
+        (scanC * R
+          + 3 * a * R
+          + 3 * R
+          + (cn * R + R + (2 + cI0) * R)
+          + (R + c9 * R + C1 * R + (1 + cI) * R)
+          + R
+          + (R + R + R + R
+              + (1 + cI) * R
+              + (ad * R + bd * R)
+              + R))
+        + (14 * R + cI * R) := by
+    exact le_trans hcancel
+      (Nat.add_le_add hbase_le hmark_le)
 
   have hcoef :
       (scanC + 3 * a + cn + c9 + C1 + cI0 + 4 * cI
