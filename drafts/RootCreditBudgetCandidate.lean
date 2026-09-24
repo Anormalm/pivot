@@ -217,8 +217,9 @@ theorem callC_partial_root_credit_budget_candidate
     exact Nat.mul_le_mul_right I (Finset.card_le_card hT6S)
 
   refine ⟨r, lgc, hlg, hrpart, ?_⟩
-  simp only [fullPivotCredit, budCreditCaseCandidate, hrpart,
-    if_neg, Nat.zero_add]
+  unfold fullPivotCredit budCreditCaseCandidate
+  rw [if_neg hrpart, if_neg hrpart]
+  simp only [Nat.zero_add]
   unfold budOf
   rw [htv, hdl, hp, ← hchg]
   exact le_trans hcost (by
