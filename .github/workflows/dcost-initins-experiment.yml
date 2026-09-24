@@ -41,7 +41,7 @@ jobs:
       - name: Apply initIns patch
         run: python ci/patch_initins.py
 
-      - name: Build patched stage-1 cost interface
+      - name: Build patched stage-2 cost log
         working-directory: upstream/formal/lean
         run: |
-          lake build Frontier.CHD.BMCost Frontier.CHD.LoopCost
+          lake build Frontier.CHD.BMCost Frontier.CHD.LoopCost Frontier.CHD.CostLog
