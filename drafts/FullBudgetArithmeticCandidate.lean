@@ -113,6 +113,7 @@ theorem budget_arith_full_credit_candidate
     calc
       A * tv ≤ a * (k + 1) * (U + Fo) :=
         Nat.mul_le_mul hA htv
+      _ = a * ((k + 1) * (U + Fo)) := by ring
       _ ≤ a * R := Nat.mul_le_mul_left _ rUF
   have eA2 : A * (k * Q) ≤ 2 * a * R := by
     calc
