@@ -142,7 +142,7 @@ theorem loopC_wprime_own_candidate
         rcases List.mem_append.mp hchild with hchildCur | hchildTail
         · obtain ⟨qc, hqc, hqcmem⟩ := mem_shift.mp hchildCur
           have heq : qc = q0 ++ [a] := by
-            exact (List.cons.inj hqc).2
+            exact (List.cons.inj hqc).2.symm
           subst qc
           exact hc.2 a r' hqcmem
         · obtain ⟨j, qj, hqj, hj⟩ :=
@@ -193,7 +193,7 @@ theorem bmsspC_wprime_own_candidate
       have hsub :=
         bmsspC_log
           (DC := DC)
-          (fpC_sound hout hsort hsimp hk) τ l
+          (fpC_sound (hins := hins) (hext := hext) hout hsort hsimp hk) τ l
 
       obtain ⟨d1, p, P, Q, W, φ1, ω, cfp, piv, σ, lgc, J, cm, cl,
         L, B'f, T6, W', hfprel, hpiv, hloop, hB'e, hB'n, hT6, hW',
@@ -202,7 +202,7 @@ theorem bmsspC_wprime_own_candidate
       have hlow' : ∀ x ∈ S, Blow ≤ d x :=
         fun x hx => (hlow x hx).trans (hpre.walk.sound x)
       obtain ⟨hfp, hI1⟩ :=
-        fpC_sound hout hsort hsimp hk
+        fpC_sound (hins := hins) (hext := hext) hout hsort hsimp hk
           _ _ _ _ _ _ _ _ _ _ _ _ _ _ hpre hI hlow' hfprel
       have h0 := linv_init hpre hfp hpiv
 
