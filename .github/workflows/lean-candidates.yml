@@ -254,6 +254,12 @@ jobs:
             cat drafts/GeometricRepairCandidate.lean
           } > upstream/formal/lean/CandidateGeometricRepair.lean
 
+          {
+            echo 'import Frontier.CHD.FindPivots'
+            cat drafts/FailedValClosureCandidate.lean
+            cat drafts/SearchClosedStabilityCandidate.lean
+          } > upstream/formal/lean/CandidateSearchClosedStability.lean
+
 
       - name: Check all candidate modules
         working-directory: upstream/formal/lean
@@ -347,6 +353,9 @@ jobs:
           echo "::group::CandidateGeometricRepair"
           lake env lean CandidateGeometricRepair.lean || status=1
           echo "::endgroup::"
+          echo "::group::CandidateSearchClosedStability"
+          lake env lean CandidateSearchClosedStability.lean || status=1
+          echo "::endgroup::"
           exit "$status"
 
-# candidate set revision: 36
+# candidate set revision: 37
