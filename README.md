@@ -72,7 +72,13 @@ The main candidate Lean modules are checked in GitHub Actions against the pinned
 - full-call cost assembly under a cheap BM.6 initialization bound;
 - the final natural-number cancellation of the expensive `I * p` term.
 
-The latest green candidate workflow is run `35956298994`. All 12 modules in that chain are `sorry`-free and `admit`-free.
+The latest green candidate workflow is run `36027609175` at commit
+`cf954123fef4e3a7f0fe2bb7703edfd614843330`. All 20 candidate modules in
+that workflow compile successfully against the pinned upstream snapshot.
+
+The N4-side local accounting, recursive credit transport, refined aggregation,
+full-budget arithmetic, square-root parameter arithmetic, and W-prime ownership
+provenance are all kernel-checked at the candidate layer.
 
 The N4-side local accounting is kernel-checked. The main asymptotic blocker is
 now BM.6: cheap raw insertion still creates Theta(t p)-scale DLazy potential
