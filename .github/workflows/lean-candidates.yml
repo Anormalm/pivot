@@ -226,6 +226,12 @@ jobs:
             cat drafts/CompleteTailEdgeRetirementCandidate.lean
           } > upstream/formal/lean/CandidateCompleteTailEdgeRetirement.lean
 
+          {
+            echo 'import Frontier.CHD.BM'
+            cat drafts/CompleteCoreStabilityCandidate.lean
+            cat drafts/GlobalMinFrontierCandidate.lean
+          } > upstream/formal/lean/CandidateGlobalMinFrontier.lean
+
 
       - name: Check all candidate modules
         working-directory: upstream/formal/lean
@@ -304,6 +310,9 @@ jobs:
           echo "::group::CandidateCompleteTailEdgeRetirement"
           lake env lean CandidateCompleteTailEdgeRetirement.lean || status=1
           echo "::endgroup::"
+          echo "::group::CandidateGlobalMinFrontier"
+          lake env lean CandidateGlobalMinFrontier.lean || status=1
+          echo "::endgroup::"
           exit "$status"
 
-# candidate set revision: 30
+# candidate set revision: 31
