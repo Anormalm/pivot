@@ -1,0 +1,28 @@
+{
+  "experiment": "dormant_findpivots_sim",
+  "stable_overlap": {
+    "h_32_q_32": {
+      "baseline_edge_scans": 1024,
+      "cached_edge_scans": 63,
+      "reduction_factor": 16.253968254
+    },
+    "h_64_q_32": {
+      "baseline_edge_scans": 2048,
+      "cached_edge_scans": 95,
+      "reduction_factor": 21.5578947368
+    }
+  },
+  "decreasing_overlap": {
+    "h_32_q_32": {
+      "baseline_edge_scans": 1024,
+      "cached_edge_scans": 1024,
+      "reduction_factor": 1.0
+    },
+    "h_64_q_32": {
+      "baseline_edge_scans": 2048,
+      "cached_edge_scans": 2048,
+      "reduction_factor": 1.0
+    }
+  },
+  "interpretation": "Versioned dormant closure can remove almost all duplicate scans when shared tail labels remain stable, but strict decreases can invalidate every cached scan. The experiment supports the implementation mechanism and simultaneously demonstrates why versioning alone does not prove a better worst-case bound."
+}
