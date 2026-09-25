@@ -1,0 +1,13 @@
+{
+  "max_ratio_to_nlogk": 0.5,
+  "largest_case": {
+    "n_vertices": 2048,
+    "k": 256,
+    "merges": 2040,
+    "moved_vertex_charge": 8192,
+    "n_log2_k": 16384,
+    "ratio_to_nlogk": 0.5,
+    "final_components": 8
+  },
+  "meaning": "ownership movement respects O(n log k) under small-to-large merging; this does not bound label repropagation or edge rescans"
+}
