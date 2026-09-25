@@ -47,7 +47,7 @@ theorem global_min_frontier_step_candidate
   have hyc : Complete d y :=
     IsFrontier.complete_of_min hF hY hsound hy hmin
   have hyc' : Complete d' y :=
-    complete_of_le hyc (hle y) hsound'
+    BM.complete_of_le hyc (hle y) hsound'
   have hU :
       ∀ v ∈ Utilde B S, dis (s := s) v < B := by
     intro v hv
