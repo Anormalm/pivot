@@ -215,6 +215,11 @@ jobs:
             cat drafts/BatchedFrontierBridgeCandidate.lean
           } > upstream/formal/lean/CandidateBatchedFrontierBridge.lean
 
+          {
+            echo 'import Frontier.CHD.BM'
+            cat drafts/CompleteCoreStabilityCandidate.lean
+          } > upstream/formal/lean/CandidateCompleteCoreStability.lean
+
 
       - name: Check all candidate modules
         working-directory: upstream/formal/lean
@@ -287,6 +292,9 @@ jobs:
           echo "::group::CandidateBatchedFrontierBridge"
           lake env lean CandidateBatchedFrontierBridge.lean || status=1
           echo "::endgroup::"
+          echo "::group::CandidateCompleteCoreStability"
+          lake env lean CandidateCompleteCoreStability.lean || status=1
+          echo "::endgroup::"
           exit "$status"
 
-# candidate set revision: 28
+# candidate set revision: 29
