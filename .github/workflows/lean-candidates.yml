@@ -232,6 +232,11 @@ jobs:
             cat drafts/GlobalMinFrontierCandidate.lean
           } > upstream/formal/lean/CandidateGlobalMinFrontier.lean
 
+          {
+            echo 'import Frontier.CHD.FindPivots'
+            cat drafts/FailedValClosureCandidate.lean
+          } > upstream/formal/lean/CandidateFailedValClosure.lean
+
 
       - name: Check all candidate modules
         working-directory: upstream/formal/lean
@@ -313,6 +318,9 @@ jobs:
           echo "::group::CandidateGlobalMinFrontier"
           lake env lean CandidateGlobalMinFrontier.lean || status=1
           echo "::endgroup::"
+          echo "::group::CandidateFailedValClosure"
+          lake env lean CandidateFailedValClosure.lean || status=1
+          echo "::endgroup::"
           exit "$status"
 
-# candidate set revision: 31
+# candidate set revision: 32
