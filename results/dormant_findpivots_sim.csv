@@ -1,0 +1,9 @@
+mode,q,h,k,baseline_edge_scans,cached_edge_scans,scan_reduction_factor,cache_hits
+stable,8,8,10,64,15,4.2666666667,7
+decreasing,8,8,10,64,64,1.0,0
+stable,16,16,18,256,31,8.2580645161,15
+decreasing,16,16,18,256,256,1.0,0
+stable,32,32,34,1024,63,16.2539682540,31
+decreasing,32,32,34,1024,1024,1.0,0
+stable,32,64,66,2048,95,21.5578947368,31
+decreasing,32,64,66,2048,2048,1.0,0
