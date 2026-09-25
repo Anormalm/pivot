@@ -1,0 +1,15 @@
+{
+  "model": "exact-label complete directed component, all searches fail because h<k",
+  "observation": "baseline rescans every internal edge once per root; ideal stable reuse scans each tail/edge once",
+  "largest_case": {
+    "h": 64,
+    "q": 64,
+    "k": 65,
+    "component_edges": 4032,
+    "baseline_edge_scans": 258048,
+    "ideal_cached_edge_scans": 4032,
+    "scan_reduction_factor": 64.0,
+    "duplicate_fraction": 0.984375
+  },
+  "interpretation": "shows repeated failed-search scanning can contribute a full multiplicative q factor on a valid stable subclass; does not prove versioned reuse is sound when labels change"
+}
