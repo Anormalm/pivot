@@ -1,0 +1,21 @@
+{
+  "schedule": "repair at size >= 2*base, then base := size",
+  "largest_case": {
+    "k": 1024,
+    "growth_events": 1023,
+    "rebuilds": 10,
+    "rebuild_sizes": [
+      2,
+      4,
+      8,
+      16,
+      32,
+      64,
+      128,
+      256,
+      512,
+      1024
+    ]
+  },
+  "observation": "singleton growth produces exactly ceil(log2 k) rebuild epochs; this only establishes geometric scheduling, not shortest-path repair correctness or a global edge bound"
+}
