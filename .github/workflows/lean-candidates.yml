@@ -205,6 +205,11 @@ jobs:
             cat drafts/WPrimeOwnFormalCandidate.lean
           } > upstream/formal/lean/CandidateWPrimeOwnFormal.lean
 
+          {
+            echo 'import Frontier.CHD.Basic'
+            cat drafts/ClosedRegionCoverageCandidate.lean
+          } > upstream/formal/lean/CandidateClosedRegionCoverage.lean
+
 
       - name: Check all candidate modules
         working-directory: upstream/formal/lean
@@ -271,6 +276,9 @@ jobs:
           echo "::group::CandidateWPrimeOwnFormal"
           lake env lean CandidateWPrimeOwnFormal.lean || status=1
           echo "::endgroup::"
+          echo "::group::CandidateClosedRegionCoverage"
+          lake env lean CandidateClosedRegionCoverage.lean || status=1
+          echo "::endgroup::"
           exit "$status"
 
-# candidate set revision: 26
+# candidate set revision: 27
