@@ -249,6 +249,11 @@ jobs:
             cat drafts/CanonicalDormantContactCandidate.lean
           } > upstream/formal/lean/CandidateCanonicalDormantContact.lean
 
+          {
+            echo 'import Mathlib'
+            cat drafts/GeometricRepairCandidate.lean
+          } > upstream/formal/lean/CandidateGeometricRepair.lean
+
 
       - name: Check all candidate modules
         working-directory: upstream/formal/lean
@@ -339,6 +344,9 @@ jobs:
           echo "::group::CandidateCanonicalDormantContact"
           lake env lean CandidateCanonicalDormantContact.lean || status=1
           echo "::endgroup::"
+          echo "::group::CandidateGeometricRepair"
+          lake env lean CandidateGeometricRepair.lean || status=1
+          echo "::endgroup::"
           exit "$status"
 
-# candidate set revision: 35
+# candidate set revision: 36
