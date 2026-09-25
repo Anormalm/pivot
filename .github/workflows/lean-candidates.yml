@@ -244,6 +244,11 @@ jobs:
             cat drafts/FailedValFrontierBridgeCandidate.lean
           } > upstream/formal/lean/CandidateFailedValFrontierBridge.lean
 
+          {
+            echo 'import Frontier.CHD.FindPivots'
+            cat drafts/CanonicalDormantContactCandidate.lean
+          } > upstream/formal/lean/CandidateCanonicalDormantContact.lean
+
 
       - name: Check all candidate modules
         working-directory: upstream/formal/lean
@@ -331,6 +336,9 @@ jobs:
           echo "::group::CandidateFailedValFrontierBridge"
           lake env lean CandidateFailedValFrontierBridge.lean || status=1
           echo "::endgroup::"
+          echo "::group::CandidateCanonicalDormantContact"
+          lake env lean CandidateCanonicalDormantContact.lean || status=1
+          echo "::endgroup::"
           exit "$status"
 
-# candidate set revision: 34
+# candidate set revision: 35
