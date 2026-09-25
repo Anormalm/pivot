@@ -1,0 +1,10 @@
+{
+  "route": "retain BM.6 Theta(t p), set k=Theta(t), reduce FindPivots coefficient A(k)",
+  "if_A_k_O_1": "O(sqrt(m N log N)) core",
+  "if_A_k_O_log_k": "O(sqrt(m N log N) log t) core",
+  "showcase_alpha_3_4": {
+    "current": "n log^(11/12) n",
+    "A_O_1": "n log^(7/8) n",
+    "A_O_log_k": "n log^(7/8) n log log n"
+  }
+}
