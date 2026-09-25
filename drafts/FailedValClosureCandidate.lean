@@ -145,5 +145,29 @@ theorem Search.failed_complete_from_final_val_candidate
   exact failed_state_complete_from_val_candidate
     hout hI' hH hclosed hD hxval hx hvis hvB
 
+/-- One failed final val-region may certify arbitrarily many Q roots at once.
+The algorithm only needs to record that each such root lies in final val; no
+runtime completeness test is required. -/
+theorem failed_val_qroots_candidate
+    {c : FPCtx G s} (hout : OutOK c)
+    {σ : SSt G s}
+    (hI : SInv c σ)
+    (hH : σ.H = ∅)
+    (hcl :
+      ∀ w ∈ σ.done, ∀ e ∈ c.out w, Closed c σ w e)
+    (hD :
+      ∀ e ∈ σ.D,
+        dis (s := s) (G.dst e) < dis (s := s) (G.src e))
+    {Q : Finset (Fin G.n)}
+    (hQ : Q ⊆ σ.val) :
+    ∀ q ∈ Q, ∀ v,
+      Complete σ.d q →
+      OnPath (s := s) q v →
+      dis (s := s) v < c.B →
+      v ∈ σ.val ∧ Complete σ.d v := by
+  intro q hq v hqc hqv hvB
+  exact failed_state_complete_from_val_candidate
+    hout hI hH hcl hD (hQ hq) hqc hqv hvB
+
 end CHD
 end Frontier
