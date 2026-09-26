@@ -23,7 +23,8 @@ theorem complete_stable_candidate
     (hle : d' u ≤ d u)
     (hsound : Sound d') :
     Complete d' u ∧ d' u = d u := by
-  have hc' : Complete d' u := BM.complete_of_le hc hle hsound
+  have hc' : Complete d' u :=
+    le_antisymm (hle.trans hc.le) (hsound u)
   exact ⟨hc', hc'.trans hc.symm⟩
 
 /-- A complete below-B closed region remains complete and closed after any
