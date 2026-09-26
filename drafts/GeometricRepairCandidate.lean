@@ -74,3 +74,41 @@ theorem RepairChain.not_of_cap_le_pow_candidate
 
 end CHD
 end Frontier
+
+
+/-- If every full repair scans at most E edges and there are at most r+1
+repairs (r doubling-triggered epochs plus one final closure), total full-repair
+scan work is at most (r+1)E. -/
+theorem repair_scan_sum_le_candidate
+    {cs : List ℕ} {r E : ℕ}
+    (hlen : cs.length ≤ r + 1)
+    (hcost : ∀ c ∈ cs, c ≤ E) :
+    cs.sum ≤ (r + 1) * E := by
+  have hsum : cs.sum ≤ cs.length * E := by
+    induction cs with
+    | nil =>
+        simp
+    | cons c cs ih =>
+        have hc : c ≤ E := hcost c (by simp)
+        have htail : ∀ x ∈ cs, x ≤ E := by
+          intro x hx
+          exact hcost x (by simp [hx])
+        have hih := ih htail
+        simp only [List.sum_cons, List.length_cons]
+        omega
+  exact hsum.trans (Nat.mul_le_mul_right E hlen)
+
+/-- Combined arithmetic envelope: a doubling-bounded component with r growth
+epochs and at most one final closure pays at most (r+1)E full-repair scans,
+while 2^r remains below the component cap k. -/
+theorem RepairChain.scan_budget_candidate
+    {b r f k E : ℕ}
+    {cs : List ℕ}
+    (h : RepairChain b r f)
+    (hb : 1 ≤ b)
+    (hfk : f < k)
+    (hlen : cs.length ≤ r + 1)
+    (hcost : ∀ c ∈ cs, c ≤ E) :
+    cs.sum ≤ (r + 1) * E ∧ 2 ^ r < k := by
+  exact ⟨repair_scan_sum_le_candidate hlen hcost,
+    h.pow_lt_cap_candidate hb hfk⟩
