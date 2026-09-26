@@ -44,7 +44,7 @@ theorem sum_eout_disjoint_le_m_candidate
   classical
   have hedisj :=
     eout_pairwise_of_vertex_pairwise_candidate
-      (G := G) (s := s) hdisj
+      (G := G) hdisj
   rw [← card_foldr_union Cs (BM.Eout G) hedisj]
   calc
     (Cs.foldr (fun U acc => BM.Eout G U ∪ acc) ∅).card
