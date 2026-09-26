@@ -49,11 +49,11 @@ theorem frontier_from_failed_val_qroots_candidate
       {x | ∃ j, x ∈ P j} := by
   apply frontier_of_qroot_closure_candidate
     hfront hI.walk.sound hle hcover
-  intro y hy v _ hyc hyv
+  intro y hy v hvU hyc hyv
   have hyc' : Complete σ.d y :=
     le_antisymm ((hle y).trans hyc.le) (hI.walk.sound y)
   exact failed_state_complete_from_val_candidate
-    hout hI hH hcl hD (hQval hy) hyc' hyv
+    hout hI hH hcl hD (hQval hy) hyc' hyv hvU.1
 
 end CHD
 end Frontier
