@@ -250,7 +250,7 @@ jobs:
           } > upstream/formal/lean/CandidateCanonicalDormantContact.lean
 
           {
-            echo 'import Mathlib'
+            echo 'import Frontier.CHD.Basic'
             cat drafts/GeometricRepairCandidate.lean
           } > upstream/formal/lean/CandidateGeometricRepair.lean
 
@@ -358,4 +358,4 @@ jobs:
           echo "::endgroup::"
           exit "$status"
 
-# candidate set revision: 37
+# candidate set revision: 38
