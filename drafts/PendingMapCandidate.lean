@@ -112,5 +112,40 @@ theorem applyPendingMap_merge_candidate
       | some b =>
           simp [hP, hQ, DS.mergeVal, min_assoc]
 
+
+/-- Pointwise-min merging of two sound pending maps preserves soundness of
+every stored candidate. -/
+theorem pending_merge_sound_candidate
+    {P Q : DS G s}
+    (hP :
+      ∀ v c, P v = some c →
+        dis (s := s) v ≤ c)
+    (hQ :
+      ∀ v c, Q v = some c →
+        dis (s := s) v ≤ c) :
+    ∀ v c, DS.merge P Q v = some c →
+      dis (s := s) v ≤ c := by
+  intro v c hc
+  unfold DS.merge at hc
+  cases hp : P v with
+  | none =>
+      cases hq : Q v with
+      | none =>
+          simp [DS.mergeVal, hp, hq] at hc
+      | some b =>
+          simp [DS.mergeVal, hp, hq] at hc
+          subst c
+          exact hQ v b hq
+  | some a =>
+      cases hq : Q v with
+      | none =>
+          simp [DS.mergeVal, hp, hq] at hc
+          subst c
+          exact hP v a hp
+      | some b =>
+          simp [DS.mergeVal, hp, hq] at hc
+          subst c
+          exact le_min (hP v a hp) (hQ v b hq)
+
 end CHD
 end Frontier
