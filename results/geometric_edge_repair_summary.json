@@ -1,0 +1,22 @@
+{
+  "model": "full component repair only after size doubling, plus one final repair",
+  "max_ratio_to_E_ceil_log2_k": 1,
+  "interpretation": "full-repair edge scans are bounded by E * ceil(log2 k) in the abstract schedule; this does not include incremental dirty-work or prove graph realizability",
+  "parameters": {
+    "k_values": [
+      8,
+      16,
+      32,
+      64,
+      128,
+      256,
+      512
+    ],
+    "final_sizes": "1, k/4, k/2, k-1",
+    "edge_multipliers": [
+      1,
+      4,
+      16
+    ]
+  }
+}
