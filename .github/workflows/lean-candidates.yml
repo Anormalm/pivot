@@ -275,6 +275,13 @@ jobs:
             cat drafts/PendingMapCandidate.lean
           } > upstream/formal/lean/CandidatePendingMap.lean
 
+          {
+            echo 'import Frontier.CHD.BM'
+            cat drafts/CompleteCoreStabilityCandidate.lean
+            cat drafts/PendingMapCandidate.lean
+            cat drafts/PendingCoreStabilityCandidate.lean
+          } > upstream/formal/lean/CandidatePendingCoreStability.lean
+
 
       - name: Check all candidate modules
         working-directory: upstream/formal/lean
@@ -380,6 +387,9 @@ jobs:
           echo "::group::CandidatePendingMap"
           lake env lean CandidatePendingMap.lean || status=1
           echo "::endgroup::"
+          echo "::group::CandidatePendingCoreStability"
+          lake env lean CandidatePendingCoreStability.lean || status=1
+          echo "::endgroup::"
           exit "$status"
 
-# candidate set revision: 41
+# candidate set revision: 42
