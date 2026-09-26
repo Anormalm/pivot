@@ -260,6 +260,11 @@ jobs:
             cat drafts/SearchClosedStabilityCandidate.lean
           } > upstream/formal/lean/CandidateSearchClosedStability.lean
 
+          {
+            echo 'import Frontier.CHD.TraceSize'
+            cat drafts/DisjointEdgeBudgetCandidate.lean
+          } > upstream/formal/lean/CandidateDisjointEdgeBudget.lean
+
 
       - name: Check all candidate modules
         working-directory: upstream/formal/lean
@@ -356,6 +361,9 @@ jobs:
           echo "::group::CandidateSearchClosedStability"
           lake env lean CandidateSearchClosedStability.lean || status=1
           echo "::endgroup::"
+          echo "::group::CandidateDisjointEdgeBudget"
+          lake env lean CandidateDisjointEdgeBudget.lean || status=1
+          echo "::endgroup::"
           exit "$status"
 
-# candidate set revision: 38
+# candidate set revision: 39
