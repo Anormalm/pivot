@@ -265,6 +265,11 @@ jobs:
             cat drafts/DisjointEdgeBudgetCandidate.lean
           } > upstream/formal/lean/CandidateDisjointEdgeBudget.lean
 
+          {
+            echo 'import Frontier.CHD.Basic'
+            cat drafts/PendingMinCandidate.lean
+          } > upstream/formal/lean/CandidatePendingMin.lean
+
 
       - name: Check all candidate modules
         working-directory: upstream/formal/lean
@@ -364,6 +369,9 @@ jobs:
           echo "::group::CandidateDisjointEdgeBudget"
           lake env lean CandidateDisjointEdgeBudget.lean || status=1
           echo "::endgroup::"
+          echo "::group::CandidatePendingMin"
+          lake env lean CandidatePendingMin.lean || status=1
+          echo "::endgroup::"
           exit "$status"
 
-# candidate set revision: 39
+# candidate set revision: 40
