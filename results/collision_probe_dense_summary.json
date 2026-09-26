@@ -1,0 +1,12 @@
+{
+  "model": "dense directed clique, independent exact failed searches versus one speculative ownership/collision probe",
+  "largest_case": {
+    "h": 128,
+    "q": 128,
+    "k": 129,
+    "baseline": 2080768,
+    "speculative": 128,
+    "ratio": 16256
+  },
+  "caution": "toy scan-count model only; exact dormant repair cost is excluded"
+}
