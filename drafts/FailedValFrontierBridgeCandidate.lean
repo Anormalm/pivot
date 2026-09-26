@@ -50,8 +50,10 @@ theorem frontier_from_failed_val_qroots_candidate
   apply frontier_of_qroot_closure_candidate
     hfront hI.walk.sound hle hcover
   intro y hy v _ hyc hyv
+  have hyc' : Complete σ.d y :=
+    le_antisymm ((hle y).trans hyc.le) (hI.walk.sound y)
   exact failed_state_complete_from_val_candidate
-    hout hI hH hcl hD (hQval hy) hyc hyv
+    hout hI hH hcl hD (hQval hy) hyc' hyv
 
 end CHD
 end Frontier
