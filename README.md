@@ -72,18 +72,37 @@ The main candidate Lean modules are checked in GitHub Actions against the pinned
 - full-call cost assembly under a cheap BM.6 initialization bound;
 - the final natural-number cancellation of the expensive `I * p` term.
 
-The latest green candidate workflow is run `36027609175` at commit
-`cf954123fef4e3a7f0fe2bb7703edfd614843330`. All 20 candidate modules in
-that workflow compile successfully against the pinned upstream snapshot.
+The latest green candidate workflow is run `36231171985`. All 31
+candidate modules in that workflow compile successfully against the pinned
+upstream snapshot.
 
-The N4-side local accounting, recursive credit transport, refined aggregation,
-full-budget arithmetic, square-root parameter arithmetic, and W-prime ownership
-provenance are all kernel-checked at the candidate layer.
+The checked chain now includes not only the N4-side accounting and recursive
+credit transport, but also the first batched-FindPivots correctness/cost
+building blocks:
 
-The N4-side local accounting is kernel-checked. The main asymptotic blocker is
-now BM.6: cheap raw insertion still creates Theta(t p)-scale DLazy potential
-in the worst regime, so the square-root master bound is not obtained by
-accounting cleanup alone.
+- one failed final `val` region can serve multiple Q roots;
+- complete closed cores remain stable under later monotone label updates;
+- scanned-edge certificates survive when the tail label is unchanged;
+- canonical dormant contacts create/identify complete targets;
+- geometric repair epochs admit a logarithmic count;
+- pairwise-disjoint final component vertex sets have total outgoing-edge count
+  at most `m`.
+
+The N4-side local accounting is therefore no longer the active bottleneck.
+The main asymptotic blocker remains BM.6 for the original constant-`k`
+route: cheap raw insertion still creates Theta(t p)-scale DLazy potential.
+
+The active second route keeps that BM.6 term, takes `k = Theta(t)`, and
+tries to replace one-local-search-per-root FindPivots by shared dormant
+components.  The current conditional cost target is roughly
+
+```text
+O((N log N / t + m t) polylog t),
+```
+
+which would still beat the current `11/12` showcase exponent if the
+remaining strict-label-change / incremental-repair work can be given the same
+event-based global charge.
 
 ## Why the `+1` looks removable
 
