@@ -63,6 +63,23 @@ theorem applyPending_le_candidate
     simp [applyPending, pendingMin_le_base_candidate]
   · simp [applyPending, Function.update_noteq hx]
 
+/-- A common lower bound of the base and every pending candidate remains
+a lower bound of their iterated minimum. -/
+theorem le_pendingMin_candidate
+    {lo base : WLab G s} {cs : List (WLab G s)}
+    (hbase : lo ≤ base)
+    (hcand : ∀ c ∈ cs, lo ≤ c) :
+    lo ≤ pendingMin base cs := by
+  induction cs generalizing base with
+  | nil =>
+      simpa [pendingMin] using hbase
+  | cons c cs ih =>
+      simp only [pendingMin]
+      apply ih
+      · exact le_min hbase (hcand c (by simp))
+      · intro z hz
+        exact hcand z (by simp [hz])
+
 /-- If every pending candidate is itself a sound upper bound for the head's
 canonical distance, batching by minimum preserves global Soundness. -/
 theorem applyPending_sound_candidate
@@ -75,49 +92,7 @@ theorem applyPending_sound_candidate
   by_cases hx : x = v
   · subst x
     simp only [applyPending, Function.update_self]
-    induction cs generalizing d with
-    | nil =>
-        simp [pendingMin]
-        exact hsound v
-    | cons c cs ih =>
-        simp only [pendingMin]
-        have hbase : dis (s := s) v ≤ min (d v) c :=
-          le_min (hsound v) (hcand c (by simp))
-        have htail :
-            ∀ z ∈ cs, dis (s := s) v ≤ z := by
-          intro z hz
-          exact hcand z (by simp [hz])
-        clear ih
-        induction cs generalizing d with
-        | nil =>
-            simpa [pendingMin] using hbase
-        | cons a as ih2 =>
-            simp only [pendingMin]
-            have ha : dis (s := s) v ≤ a :=
-              htail a (by simp)
-            have hnext :
-                dis (s := s) v ≤ min (min (d v) c) a :=
-              le_min hbase ha
-            -- continue through the remaining pending values
-            have hrest :
-                ∀ z ∈ as, dis (s := s) v ≤ z := by
-              intro z hz
-              exact htail z (by simp [hz])
-            exact
-              (by
-                induction as generalizing d with
-                | nil =>
-                    simpa [pendingMin] using hnext
-                | cons b bs ih3 =>
-                    simp only [pendingMin]
-                    have hb : dis (s := s) v ≤ b :=
-                      hrest b (by simp)
-                    exact ih3
-                      (d := Function.update d v
-                        (min (min (d v) c) a))
-                      (by
-                        intro z hz
-                        exact hrest z (by simp [hz])))
+    exact le_pendingMin_candidate (hsound v) hcand
   · simp [applyPending, Function.update_noteq hx]
     exact hsound x
 
