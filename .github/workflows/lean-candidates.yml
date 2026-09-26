@@ -270,6 +270,11 @@ jobs:
             cat drafts/PendingMinCandidate.lean
           } > upstream/formal/lean/CandidatePendingMin.lean
 
+          {
+            echo 'import Frontier.CHD.Basic'
+            cat drafts/PendingMapCandidate.lean
+          } > upstream/formal/lean/CandidatePendingMap.lean
+
 
       - name: Check all candidate modules
         working-directory: upstream/formal/lean
@@ -372,6 +377,9 @@ jobs:
           echo "::group::CandidatePendingMin"
           lake env lean CandidatePendingMin.lean || status=1
           echo "::endgroup::"
+          echo "::group::CandidatePendingMap"
+          lake env lean CandidatePendingMap.lean || status=1
+          echo "::endgroup::"
           exit "$status"
 
-# candidate set revision: 40
+# candidate set revision: 41
