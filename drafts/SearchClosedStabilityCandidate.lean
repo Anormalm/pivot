@@ -29,7 +29,7 @@ theorem Closed.grows_of_complete_candidate
     (hI' : SInv c σ') :
     Closed c σ' u e := by
   have hc' : Complete σ'.d u :=
-    BM.complete_of_le hc (hg.dle u) hI'.walk.sound
+    le_antisymm ((hg.dle u).trans hc.le) (hI'.walk.sound u)
   have hsame : σ'.d u = σ.d u := by
     rw [hc', hc]
   exact hclosed.grows hg hsame
