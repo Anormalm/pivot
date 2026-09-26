@@ -88,5 +88,29 @@ theorem pending_insert_sound_candidate
     rw [Function.update_noteq hx] at hk
     exact hP x k hk
 
+
+/-- Pending batches compose by pointwise minimum: applying P and then Q is
+the same final label state as merging the two pending maps first and applying
+once. -/
+theorem applyPendingMap_merge_candidate
+    (d : Labels G s) (P Q : DS G s) :
+    applyPendingMap (applyPendingMap d P) Q
+      = applyPendingMap d (DS.merge P Q) := by
+  funext v
+  unfold applyPendingMap DS.merge
+  cases hP : P v with
+  | none =>
+      cases hQ : Q v with
+      | none =>
+          simp [hP, hQ, DS.mergeVal]
+      | some b =>
+          simp [hP, hQ, DS.mergeVal]
+  | some a =>
+      cases hQ : Q v with
+      | none =>
+          simp [hP, hQ, DS.mergeVal]
+      | some b =>
+          simp [hP, hQ, DS.mergeVal, min_assoc]
+
 end CHD
 end Frontier
